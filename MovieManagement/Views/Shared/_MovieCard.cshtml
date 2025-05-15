@@ -1,0 +1,11 @@
+@model MovieCard
+<div class="card shadow-sm mb-4" style="width: 18rem;">
+    <img src="@Model.ImageUrl" class="card-img-top" alt="Movie Poster" style="height: 400px; object-fit: cover;">
+    <div class="card-body">
+        <h5 class="card-title">@Model.Title</h5>
+        <p class="card-text mb-1"><strong>Genre: </strong>@Model.Genre</p>
+        <p class="card-text mb-1"><strong>Release Year: </strong>@Model.Year</p>
+        <p class="card-text"><strong>Rating️: </strong>@Model.Rating/10⭐️</p>
+        <a href="/Movies/Details/1" class="btn btn-primary w-100">View Details</a>
+    </div>
+</div>

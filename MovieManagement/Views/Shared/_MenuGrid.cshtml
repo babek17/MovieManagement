@@ -1,0 +1,32 @@
+@model IEnumerable<MovieCard>
+
+<div class="container">
+    <div class="row">
+        @foreach (var movie in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <partial name="_MovieCard" model="movie"/>
+            </div>
+        }
+    </div>
+</div>
+<div class="d-flex justify-content-center mt-4">
+    <nav>
+        <ul class="pagination">
+            <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Previous</a>
+            </li>
+
+            @for (int i = 1; i <= ViewBag.TotalPages; i++)
+            {
+                <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
+                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                </li>
+            }
+
+            <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
+                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Next</a>
+            </li>
+        </ul>
+    </nav>
+</div>

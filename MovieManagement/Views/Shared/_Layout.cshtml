@@ -1,50 +1,83 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    <title>@ViewData["Title"] - MovieManagement</title>
-    <script type="importmap"></script>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true"/>
-    <link rel="stylesheet" href="~/MovieManagement.styles.css" asp-append-version="true"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] Movietto</title>
+    <link href="/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
-<body>
-<header>
-    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-        <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">MovieManagement</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                    aria-expanded="false" aria-label="Toggle navigation">
+<body style="
+  background-image: url('./background.png'); 
+  background-repeat: no-repeat; 
+  background-size: cover; 
+  background-attachment: fixed;
+  background-position: center;
+">
+    <header>    
+        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+            <a class="navbar-brand" href="/">Movietto</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
                 <span class="navbar-toggler-icon"></span>
             </button>
-            <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                <ul class="navbar-nav flex-grow-1">
+
+            <div class="collapse navbar-collapse" id="navbarContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Index">Home</a>
+                        <a class="nav-link" href="/Watchlist">Watchlist</a>
+                    </li>
+                </ul>
+
+                <!-- Search Form -->
+                <form class="d-flex me-3" method="get" action="/Movies/Search">
+                    <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-light" type="submit">Search</button>
+                </form>
+
+                <!-- Right Side - Authentication -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/Account/Login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+                        <a class="nav-link" href="/Account/Register">Register</a>
                     </li>
                 </ul>
             </div>
+        </nav>
+    </header>
+
+    <main role="main" class="container mt-4">
+        <!-- Sort & Filter Controls -->
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <!-- Sort Dropdown -->
+            <div class="dropdown">
+                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Sort
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                    <li><a class="dropdown-item" href="/Movies?sort=name">Name</a></li>
+                    <li><a class="dropdown-item" href="/Movies?sort=rating">Rating</a></li>
+                    <li><a class="dropdown-item" href="/Movies?sort=date">Release Date</a></li>
+                </ul>
+                <!-- Filter Dropdown -->
+                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    Filter
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <li><a class="dropdown-item" href="/Movies?genre=action">Action</a></li>
+                    <li><a class="dropdown-item" href="/Movies?genre=comedy">Comedy</a></li>
+                    <li><a class="dropdown-item" href="/Movies?genre=drama">Drama</a></li>
+                </ul>
+            </div>
         </div>
-    </nav>
-</header>
-<div class="container">
-    <main role="main" class="pb-3">
+
         @RenderBody()
     </main>
-</div>
 
-<footer class="border-top footer text-muted">
-    <div class="container">
-        &copy; 2025 - MovieManagement - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
-    </div>
-</footer>
-<script src="~/lib/jquery/dist/jquery.min.js"></script>
-<script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
-<script src="~/js/site.js" asp-append-version="true"></script>
-@await RenderSectionAsync("Scripts", required: false)
+    <footer class="text-center text-muted py-3">
+        <hr />
+        <p>&copy; @DateTime.Now.Year - Movietto</p>
+    </footer>
 </body>
 </html>
