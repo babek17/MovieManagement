@@ -25,8 +25,8 @@ public class HomeController: Controller
         var movieCard = _movieRepository.GetAllMovies().Skip((page-1)*pageSize).Take(pageSize).
             Select(mc => new MovieCard()
         {
+            Id = mc.MovieId,
             Title = mc.Title,
-            Rating = mc.Rating,
             Year = mc.ReleaseYear,
             Genre = mc.Genre,
             ImageUrl = mc.ImageUrl

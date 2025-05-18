@@ -1,6 +1,8 @@
 @model MovieCard
 <div class="card shadow-sm mb-4" style="width: 18rem;">
-    <img src="@Model.ImageUrl" class="card-img-top" alt="Movie Poster" style="height: 400px; object-fit: cover;">
+    <a asp-controller="Movie" asp-action="MovieDetails" asp-route-movieId="@Model.Id">
+        <img src="@Model.ImageUrl" class="card-img-top" alt="Movie Poster" style="height: 400px; object-fit: cover;">
+    </a>
     <div class="card-body">
         <h5 class="card-title">@Model.Title</h5>
         <p class="card-text mb-1"><strong>Genre: </strong>@Model.Genre</p>
