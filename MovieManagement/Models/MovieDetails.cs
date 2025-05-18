@@ -4,6 +4,7 @@ namespace MovieManagement.Models;
 
 public class MovieDetails
 {
+    public int Id { get; set; }
     public required string Title { get; set; }
     public string Genre { get; set; }
     public required string DirectorName { get; set; }
@@ -13,5 +14,5 @@ public class MovieDetails
     public string TrailerUrl { get; set; }
     public float Rating { get; set; } = 0;
     public List<Comment> Comments { get; set; }= new List<Comment>();
-    public string Username { get; set; }
+    public string Description { get; set; }
 }

@@ -9,21 +9,58 @@
             <div class="col-md-8">
                 <div class="card-body p-4">
                     <h2 class="card-title mb-3">@Model.Title</h2>
+                    <p class="mb-3"><strong>Rating:</strong> ⭐ @Model.Rating / 10</p>
                     <p class="mb-2"><strong>Genre:</strong> @Model.Genre</p>
                     <p class="mb-2"><strong>Director:</strong> @Model.DirectorName</p>
                     <p class="mb-2"><strong>Running Time:</strong> @Model.RunningTime minutes</p>
                     <p class="mb-2"><strong>Release Year:</strong> @Model.ReleaseYear</p>
-                    <p class="mb-3"><strong>Rating:</strong> ⭐ @Model.Rating / 10</p>
-                    @if (!string.IsNullOrWhiteSpace(Model.TrailerUrl))
-                    {
-                        <a href="@Model.TrailerUrl" target="_blank" class="btn btn-primary">
-                            Watch Trailer
-                        </a>
-                    }
+                    <p class="mb-2"><strong>Short Description: </strong>@Model.Description</p>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="mt-5">
+        <h4>Trailer</h4>
+        <div class="ratio ratio-16x9">
+            <iframe src="https://www.youtube.com/embed/@Model.TrailerUrl" title="Trailer" allowfullscreen></iframe>
+        </div>
+    </div>
+
+    <div class="mt-5">
+        <h4>Ratings</h4>
+        <p><strong>Average Rating:</strong> 0 / 10</p>
+
+        @if (User.Identity.IsAuthenticated)
+        {
+            <form asp-controller="Movie" asp-action="RateMovie" method="post">
+                <input type="hidden" name="title" value="@Model.Title" />
+                <label for="rating">Your Rating:</label>
+                <select name="rating" class="form-select w-auto d-inline-block" required>
+                    <option disabled selected>Rate...</option>
+                    @for (int i = 1; i <= 10; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        }
+        else
+        {
+            <a asp-page="/Account/Login"
+               asp-area="Identity"
+               asp-route-returnUrl="@Url.Action("MovieDetails", "Movie", new { title = Model.Title })"
+               class="btn btn-primary">
+                Login to rate this movie
+            </a>
+        }
+        @if (TempData["Message"] != null)
+        {
+            <p style="color: red">@TempData["Message"]</p>
+        }
+    </div>
+
 
     @if (Model.Comments?.Any() == true)
     {
@@ -46,3 +83,6 @@
         </div>
     }
 </div>
+
+
+

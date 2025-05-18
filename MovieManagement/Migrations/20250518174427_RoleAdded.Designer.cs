@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieManagement.Repositories;
 
@@ -11,9 +12,11 @@ using MovieManagement.Repositories;
 namespace MovieManagement.Migrations
 {
     [DbContext(typeof(MovieManagementDbContext))]
-    partial class MovieManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250518174427_RoleAdded")]
+    partial class RoleAdded
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -311,7 +314,7 @@ namespace MovieManagement.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MovieId"));
 
-                    b.Property<int>("DirectorId")
+                    b.Property<int?>("DirectorId")
                         .HasColumnType("int");
 
                     b.Property<string>("Genre")
@@ -451,9 +454,7 @@ namespace MovieManagement.Migrations
                 {
                     b.HasOne("MovieManagement.Entities.Director", "Director")
                         .WithMany("Movies")
-                        .HasForeignKey("DirectorId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("DirectorId");
 
                     b.Navigation("Director");
                 });

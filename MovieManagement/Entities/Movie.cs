@@ -9,7 +9,7 @@ public class Movie
     public required string Title { get; set; }
     [MaxLength(50)]
     public string Genre { get; set; }
-    [MaxLength(100)]
+    public int DirectorId { get; set; }
     public Director? Director { get; set; }
     public int RunningTime { get; set; }
     public int ReleaseYear { get; set; }

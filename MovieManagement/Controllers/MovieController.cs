@@ -22,6 +22,7 @@ public class MovieController: Controller
         var movie = _movieRepository.GetMovieById(movieId);
         var movieDetails = new MovieDetails
         {
+            Id = movie.MovieId, 
             Title = movie.Title,
             Comments = movie.Comments,
             Genre = movie.Genre,
@@ -30,7 +31,7 @@ public class MovieController: Controller
             ReleaseYear = movie.ReleaseYear,
             RunningTime = movie.RunningTime,
             DirectorName = movie.Director.Name,
-            Username = "user"
+            Description = movie.ShortDescription
         };
         return View(movieDetails);
     }    

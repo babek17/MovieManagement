@@ -19,14 +19,16 @@ public class MovieRepository: IMovieRepository
 
     public Movie GetMovieById(int id)
     {
-        var movie = _context.Movies.FirstOrDefault(m => m.MovieId == id);
+        var movie = _context.Movies.Include(m => m.Director)
+            .FirstOrDefault(m => m.MovieId == id);
         if (movie == null) throw new Exception("Movie not found");
         return movie;
     }
 
     public Movie GetMovieByTitle(string title)
     {
-        var movie = _context.Movies.FirstOrDefault(m => m.Title == title);
+        var movie = _context.Movies.Include(m => m.Director)
+            .FirstOrDefault(m => m.Title == title);
         if (movie == null) throw new Exception("Movie not found");
         return movie;    
     }
