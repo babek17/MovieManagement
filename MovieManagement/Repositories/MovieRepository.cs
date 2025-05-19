@@ -35,6 +35,18 @@ public class MovieRepository: IMovieRepository
 
     public List<Movie> GetAllMoviesByDirector(int id)
     {
+        if(_context.Movies.Any(m => m.Director == null)) throw new Exception("Director not found");
         return _context.Movies.Include(m=>m.Director).Where(m=>m.Director.DirectorId==id).ToList(); 
+    }
+    
+    public async Task<IEnumerable<Movie>> SearchMoviesAsync(string query)
+    {
+        query = query.Trim();
+        if (string.IsNullOrWhiteSpace(query))
+            return Enumerable.Empty<Movie>();
+
+        query = query.Trim().ToLower();
+
+        return await _context.Movies.Where(m => m.Title.ToLower().Contains(query)).ToListAsync();
     }
 }

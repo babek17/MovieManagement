@@ -3,17 +3,20 @@ using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Entities;
 using MovieManagement.Models;
 using MovieManagement.Repositories;
+using MovieManagement.Services;
 
 namespace MovieManagement.Controllers;
 
 public class MovieController: Controller
 {
     private readonly IMovieRepository _movieRepository;
+    private readonly ISearchService<Movie> _movieSearchService;
     // private readonly UserManager<ApplicationUser> _userManager;
 
-    public MovieController(IMovieRepository movieRepository)
+    public MovieController(IMovieRepository movieRepository, ISearchService<Movie> iSearchService)
     {
         _movieRepository = movieRepository;
+        _movieSearchService = iSearchService;
     }
 
     public IActionResult MovieDetails(int movieId)
@@ -34,5 +37,28 @@ public class MovieController: Controller
             Description = movie.ShortDescription
         };
         return View(movieDetails);
-    }    
+    }
+    
+    [HttpGet("search/movies")]
+    public async Task<IActionResult> SearchMovies([FromQuery] string query)
+    {
+        ViewData["query"] = query;
+        var results = await _movieSearchService.SearchAsync(query);
+        var movieCards = results.Select(m => new MovieCard
+        {
+            Id = m.MovieId,
+            Title = m.Title,
+            Year = m.ReleaseYear,
+            Genre = m.Genre,
+            ImageUrl = m.ImageUrl
+        }).ToList();
+
+        if (!movieCards.Any())
+        {
+            ViewData["Message"] = $"No movies matched your search for '{query}'.";
+            return View("SearchMovies", new List<MovieCard>()); // empty list, but view still loads
+        }
+
+        return View(movieCards);
+    }
 }

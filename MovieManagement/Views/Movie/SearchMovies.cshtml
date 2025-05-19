@@ -1,0 +1,10 @@
+@model IEnumerable<MovieCard>
+<h3>Movies</h3>
+@if (Model.Any())
+{
+    <partial name="_MenuGrid" model="Model"/>
+}
+else
+{
+    <p>@ViewData["Message"]</p>
+}

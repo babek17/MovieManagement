@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieManagement.Repositories;
 using Microsoft.AspNetCore.Identity;
 using MovieManagement.Entities;
+using MovieManagement.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +14,9 @@ builder.Services.AddDbContext<MovieManagementDbContext>(options =>
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MovieManagementDbContext>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
+builder.Services.AddScoped<ISearchService<Movie>, MovieSearchService>();
+builder.Services.AddScoped<ISearchService<Director>, DirectorSearchService>();
+
 
 var app = builder.Build();
 
@@ -31,6 +35,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
+app.MapRazorPages();
 
 app.MapControllerRoute(
         name: "default",

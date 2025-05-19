@@ -8,4 +8,5 @@ public interface IMovieRepository
     Movie GetMovieById(int id);
     Movie GetMovieByTitle(string title);
     List<Movie> GetAllMoviesByDirector(int id);
+    Task<IEnumerable<Movie>> SearchMoviesAsync(string query);
 }

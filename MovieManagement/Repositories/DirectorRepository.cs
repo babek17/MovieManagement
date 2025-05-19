@@ -20,13 +20,24 @@ public class DirectorRepository: IDirectorRepository
     public Director GetDirectorById(int id)
     {
         if (_context.Directors.Any(d => d.DirectorId == id)) return _context.Directors.Find(id);
-        else throw new Exception("Director not found");
+        throw new Exception("Director not found");
     }
 
     public Director GetDirectorByName(string name)
     {
         if (_context.Directors.Any(d => d.Name==name)) return _context.Directors.Find(name);
-        else throw new Exception("Director not found");    
+        throw new Exception("Director not found");    
+    }
+    
+    public async Task<IEnumerable<Director>> SearchDirectorsAsync(string query)
+    {
+        query = query.Trim();
+        if (string.IsNullOrWhiteSpace(query))
+            return Enumerable.Empty<Director>();
+
+        query = query.Trim().ToLower();
+
+        return await _context.Directors.Where(d => d.Name.ToLower().Contains(query)).ToListAsync();
     }
 
 }

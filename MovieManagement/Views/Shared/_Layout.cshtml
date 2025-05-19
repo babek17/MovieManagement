@@ -8,7 +8,7 @@
     <script src="/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 </head>
 <body style="
-  background-image: url('./background.png'); 
+    background-image: url('@Url.Content("~/background.png")'); 
   background-repeat: no-repeat; 
   background-size: cover; 
   background-attachment: fixed;
@@ -29,18 +29,18 @@
                 </ul>
 
                 <!-- Search Form -->
-                <form class="d-flex me-3" method="get" action="/Movies/Search">
-                    <input class="form-control me-2" type="search" name="query" placeholder="Search" aria-label="Search">
+                <form class="d-flex me-3" method="get" asp-controller="Movie" asp-action="SearchMovies" asp-route-query="@ViewData["query"]">
+                    <input class="form-control me-2" style="width: 300px;" type="search" name="query" placeholder="Search..   (at least 3 characters)" aria-label="Search" minlength="3" required>>
                     <button class="btn btn-outline-light" type="submit">Search</button>
                 </form>
 
                 <!-- Right Side - Authentication -->
                 <ul class="navbar-nav mb-2 mb-lg-0">
                     <li class="nav-item">
-                        <a class="nav-link" href="/Account/Login">Login</a>
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/Account/Register">Register</a>
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
                     </li>
                 </ul>
             </div>
