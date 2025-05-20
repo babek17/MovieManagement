@@ -8,18 +8,17 @@ namespace MovieManagement.Controllers;
 public class DirectorController: Controller
 {
     private readonly IDirectorRepository _directorRepository;
-    private readonly ISearchService<Director> _directorSearchService;
-
-    public DirectorController(IDirectorRepository directorRepository, ISearchService<Director> directorSearchService)
+    private readonly IDirectorService _directorService;
+    public DirectorController(IDirectorRepository directorRepository, IDirectorService directorService)
     {
         _directorRepository = directorRepository;
-        _directorSearchService = directorSearchService;
+        _directorService = directorService;
     }
     
     [HttpGet("search")]
     public async Task<IActionResult> SearchDirectors([FromQuery] string query)
     {
-        var results = await _directorSearchService.SearchAsync(query);
+        var results = await _directorService.SearchAsync(query);
 
         if (!results.Any())
             return NotFound("No directors matched your query.");

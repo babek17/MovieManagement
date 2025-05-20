@@ -56,9 +56,12 @@
                     Sort
                 </button>
                 <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                    <li><a class="dropdown-item" href="/Movies?sort=name">Name</a></li>
-                    <li><a class="dropdown-item" href="/Movies?sort=rating">Rating</a></li>
-                    <li><a class="dropdown-item" href="/Movies?sort=date">Release Date</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title">Title</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating">Rating</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release">Release Date</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending">Title Descending</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending">Rating Descending</a></li>
+                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending">Release Date Descending</a></li>
                 </ul>
                 <!-- Filter Dropdown -->
                 <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">

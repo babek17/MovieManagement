@@ -3,11 +3,11 @@ using MovieManagement.Repositories;
 
 namespace MovieManagement.Services;
 
-public class DirectorSearchService:ISearchService<Director>
+public class DirectorService: IDirectorService
 {
     private readonly IDirectorRepository _directorRepository;
 
-    public DirectorSearchService(IDirectorRepository directorRepository)
+    public DirectorService(IDirectorRepository directorRepository)
     {
         _directorRepository = directorRepository;
     }

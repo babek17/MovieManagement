@@ -11,6 +11,8 @@ public class Movie
     public string Genre { get; set; }
     public int DirectorId { get; set; }
     public Director? Director { get; set; }
+    public decimal Rating { get; set; } = 0;
+    public int RatingCount { get; set; } = 0;
     public int RunningTime { get; set; }
     public int ReleaseYear { get; set; }
     public string ImageUrl { get; set; }

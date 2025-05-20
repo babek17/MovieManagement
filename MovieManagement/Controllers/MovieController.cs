@@ -9,20 +9,15 @@ namespace MovieManagement.Controllers;
 
 public class MovieController: Controller
 {
-    private readonly IMovieRepository _movieRepository;
-    private readonly ISearchService<Movie> _movieSearchService;
-    // private readonly UserManager<ApplicationUser> _userManager;
-
-    public MovieController(IMovieRepository movieRepository, ISearchService<Movie> iSearchService)
+    private readonly IMovieService _movieService;
+    public MovieController(IMovieService movieService)
     {
-        _movieRepository = movieRepository;
-        _movieSearchService = iSearchService;
+        _movieService = movieService;
     }
 
     public IActionResult MovieDetails(int movieId)
     {
-        // var user = await _userManager.GetUserAsync(User);
-        var movie = _movieRepository.GetMovieById(movieId);
+        var movie = _movieService.GetMovieById(movieId);
         var movieDetails = new MovieDetails
         {
             Id = movie.MovieId, 
@@ -43,7 +38,7 @@ public class MovieController: Controller
     public async Task<IActionResult> SearchMovies([FromQuery] string query)
     {
         ViewData["query"] = query;
-        var results = await _movieSearchService.SearchAsync(query);
+        var results = await _movieService.SearchAsync(query);
         var movieCards = results.Select(m => new MovieCard
         {
             Id = m.MovieId,
@@ -56,9 +51,15 @@ public class MovieController: Controller
         if (!movieCards.Any())
         {
             ViewData["Message"] = $"No movies matched your search for '{query}'.";
-            return View("SearchMovies", new List<MovieCard>()); // empty list, but view still loads
+            return View("SearchMovies", new List<MovieCard>());
         }
 
         return View(movieCards);
     }
+
+    public IActionResult Sort(string sortBy)
+    {
+        return RedirectToAction("Index", "Home", new { sortBy = sortBy });
+    }
+    
 }

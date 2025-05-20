@@ -12,9 +12,9 @@ public class MovieRepository: IMovieRepository
         _context = context;
     }
     
-    public List<Movie> GetAllMovies()
+    public IQueryable<Movie> GetAllMovies()
     {
-        return _context.Movies.ToList();
+        return _context.Movies.Include(m=>m.Director);
     }
 
     public Movie GetMovieById(int id)
@@ -48,5 +48,29 @@ public class MovieRepository: IMovieRepository
         query = query.Trim().ToLower();
 
         return await _context.Movies.Where(m => m.Title.ToLower().Contains(query)).ToListAsync();
+    }
+
+    public IQueryable<Movie> SortMoviesAsync(string sortBy)
+    {
+        IQueryable<Movie> movies = _context.Movies.Include(m => m.Director);
+        switch (sortBy)
+        {
+            case "Title": movies=movies.OrderBy(m => m.Title);
+                break;
+            case "Title Descending": movies= movies.OrderByDescending(m => m.Title);
+                break;
+            case "Release Year": movies=movies.OrderBy(m => m.ReleaseYear);
+                break;
+            case "Release Year Descending": movies = movies.OrderByDescending(m => m.ReleaseYear);
+                break;
+            case "Rating": movies=movies.OrderBy(m => m.Rating);
+                break;
+            case "Rating Descending": movies = movies.OrderByDescending(m => m.Rating);
+                break;
+            default: movies=movies.OrderBy(m => m.Title);
+                break;
+        }
+
+        return movies;
     }
 }

@@ -1,5 +1,9 @@
 @model IEnumerable<MovieCard>
 
+@{
+    var currentSort = Context.Request.Query["sortBy"];
+}
+
 <div class="container">
     <div class="d-flex flex-wrap justify-content-center">
         @foreach (var movie in Model)
@@ -15,18 +19,18 @@
     <nav>
         <ul class="pagination">
             <li class="page-item @(ViewBag.CurrentPage == 1 ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1 })">Previous</a>
+                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage - 1, sortBy = currentSort })">Previous</a>
             </li>
 
             @for (int i = 1; i <= ViewBag.TotalPages; i++)
             {
                 <li class="page-item @(i == ViewBag.CurrentPage ? "active" : "")">
-                    <a class="page-link" href="@Url.Action("Index", new { page = i })">@i</a>
+                    <a class="page-link" href="@Url.Action("Index", new { page = i, sortBy = currentSort })">@i</a>
                 </li>
             }
 
             <li class="page-item @(ViewBag.CurrentPage == ViewBag.TotalPages ? "disabled" : "")">
-                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1 })">Next</a>
+                <a class="page-link" href="@Url.Action("Index", new { page = ViewBag.CurrentPage + 1, sortBy = currentSort })">Next</a>
             </li>
         </ul>
     </nav>

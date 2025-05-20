@@ -14,8 +14,8 @@ builder.Services.AddDbContext<MovieManagementDbContext>(options =>
 builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MovieManagementDbContext>();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
-builder.Services.AddScoped<ISearchService<Movie>, MovieSearchService>();
-builder.Services.AddScoped<ISearchService<Director>, DirectorSearchService>();
+builder.Services.AddScoped<IMovieService, MovieService>();
+builder.Services.AddScoped<IDirectorService, DirectorService>();
 
 
 var app = builder.Build();
