@@ -4,7 +4,7 @@ namespace MovieManagement.Services;
 
 public interface IMovieService
 {
-    IQueryable<Movie> Sort(string sortBy);
+    IQueryable<Movie> Sort(IQueryable<Movie> movie,string sortBy);
     Task<IEnumerable<Movie>> SearchAsync(string query);
     Movie GetMovieById(int movieId);
     IQueryable<Movie> GetAllMovies();

@@ -14,75 +14,101 @@
   background-attachment: fixed;
   background-position: center;
 ">
-    <header>    
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
-            <a class="navbar-brand" href="/">Movietto</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
-                <span class="navbar-toggler-icon"></span>
-            </button>
 
-            <div class="collapse navbar-collapse" id="navbarContent">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Watchlist">Watchlist</a>
-                    </li>
-                </ul>
+@{
+    var selectedSort = ViewBag.SortBy as string ?? "Sort";
+    var query = ViewBag.Query as string ?? "";
+}
 
-                <!-- Search Form -->
-                <form class="d-flex me-3" method="get" asp-controller="Movie" asp-action="SearchMovies" asp-route-query="@ViewData["query"]">
-                    <input class="form-control me-2" style="width: 300px;" type="search" name="query" placeholder="Search..   (at least 3 characters)" aria-label="Search" minlength="3" required>>
-                    <button class="btn btn-outline-light" type="submit">Search</button>
-                </form>
+<header>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark px-3">
+        <a class="navbar-brand" href="/">Movietto</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent">
+            <span class="navbar-toggler-icon"></span>
+        </button>
 
-                <!-- Right Side - Authentication -->
-                <ul class="navbar-nav mb-2 mb-lg-0">
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-                    </li>
-                </ul>
-            </div>
-        </nav>
-    </header>
+        <div class="collapse navbar-collapse" id="navbarContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" href="/Watchlist">Watchlist</a>
+                </li>
+            </ul>
 
-    <main role="main" class="container mt-4">
-        <!-- Sort & Filter Controls -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <!-- Sort Dropdown -->
-            <div class="dropdown">
-                <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Sort
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title">Title</a></li>
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating">Rating</a></li>
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release">Release Date</a></li>
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending">Title Descending</a></li>
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending">Rating Descending</a></li>
-                    <li><a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending">Release Date Descending</a></li>
-                </ul>
-                <!-- Filter Dropdown -->
-                <button class="btn btn-outline-secondary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    Filter
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="filterDropdown">
-                    <li><a class="dropdown-item" href="/Movies?genre=action">Action</a></li>
-                    <li><a class="dropdown-item" href="/Movies?genre=comedy">Comedy</a></li>
-                    <li><a class="dropdown-item" href="/Movies?genre=drama">Drama</a></li>
-                </ul>
-            </div>
+            <!-- Search Form -->
+            <form class="d-flex me-3" method="get" asp-controller="Home" asp-action="Index" onsubmit="return validateSearch();">
+                <input class="form-control me-2" id="searchInput" style="width: 300px;" type="search" name="query" placeholder="Search.. (at least 3 characters)" aria-label="Search">
+                <input type="hidden" name="sortBy" value="@ViewBag.SortBy"/>
+                <input type="hidden" name="genre" value="@ViewBag.SelectedGenre"/>
+                <button class="btn btn-outline-light" type="submit">Search</button>
+            </form>
+
+            <script>
+                function validateSearch() {
+                    const input = document.getElementById('searchInput').value.trim();
+                    if (input.length < 3) {
+                        alert("Please enter at least 3 characters to search.");
+                        return false; // prevent form submission
+                    }
+                    return true;
+                }
+            </script>
+
+            <!-- Right Side - Authentication -->
+            <ul class="navbar-nav mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                </li>
+            </ul>
         </div>
+    </nav>
+</header>
 
-        @RenderBody()
-        @RenderSection("Scripts", required: false)
+<main role="main" class="container mt-4">
+    <!-- Sort & Filter Controls -->
+    @if (query == "")
+    {
+        <div class="d-flex justify-content-between align-items-center mb-4">
+        <!-- Sort Dropdown -->
+        <div class="dropdown">
+            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px">
+                Sort: @selectedSort
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Title</a></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Rating</a></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Release Date</a></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Title Descending</a></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Rating Descending</a></li>
+                <li>
+                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                       asp-route-query="@ViewBag.Query">Release Date Descending</a></li>
+            </ul>
+            <!-- Filter Dropdown -->
+            @await Component.InvokeAsync("GenreFilter")
+        </div>
+    </div>
+    }
+    @RenderBody()
+    @RenderSection("Scripts", required: false)
 
-    </main>
+</main>
 
-    <footer class="text-center text-muted py-3">
-        <hr />
-        <p>&copy; @DateTime.Now.Year - Movietto</p>
-    </footer>
+<footer class="text-center text-muted py-3">
+    <hr/>
+    <p>&copy; @DateTime.Now.Year - Movietto</p>
+</footer>
 </body>
 </html>

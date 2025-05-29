@@ -1,0 +1,17 @@
+@model List<string>
+@{
+    var selectedGenre = ViewBag.SelectedGenre as string ?? "All Genres";
+    var sortBy = ViewBag.SortBy as string ?? "Title";
+    var query = ViewBag.Query as string ?? "";
+}
+
+<button class="btn btn-outline-primary dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px">
+    Genre: @selectedGenre
+</button>
+<ul class="dropdown-menu" aria-labelledby="sortDropdown">
+    @foreach (var genre in Model)
+    {
+        <li><a class="dropdown-item @(genre == selectedGenre ? "active" : "")" asp-controller="Home" asp-action="Index" asp-route-genre=@genre  asp-route-sortBy="@sortBy"
+               asp-route-query="@query">@genre</a></li>
+    }
+</ul>

@@ -1,3 +1,9 @@
 @model IEnumerable<MovieCard>
 <h3>Movies</h3>
 <partial name="_MenuGrid" model="Model"/>
+@if (ViewBag.Error != null)
+{
+    <div class="alert alert-warning text-center">
+        @ViewBag.Error
+    </div>
+}

@@ -14,13 +14,15 @@ public class MovieService: IMovieService
     
     public async Task<IEnumerable<Movie>> SearchAsync(string query)
     {
+        
         return await _movieRepository.SearchMoviesAsync(query);
     }
     
-    public IQueryable<Movie> Sort(string sortBy)
+    public IQueryable<Movie> Sort(IQueryable<Movie> movies, string sortBy)
     {
-        return  _movieRepository.SortMoviesAsync(sortBy);
+        return  _movieRepository.SortMoviesAsync(movies,sortBy);
     }
+    
 
     public Movie GetMovieById(int movieId)
     {

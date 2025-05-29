@@ -14,13 +14,22 @@ public class HomeController: Controller
         _movieService = movieService;
     }
 
-    public IActionResult Index(string sortBy= "Title", int page=1)
+    public IActionResult Index(string sortBy= "Title", int page=1, string genre = "All Genres", string query="")
     {
-        int pageSize = 12;
-        int totalMovies = _movieService.GetAllMovies().Count();
-        int totalPages = (int)Math.Ceiling(totalMovies / (double)pageSize);
 
-        var movies =  _movieService.Sort(sortBy);
+        var movies = _movieService.GetAllMovies();
+        if (!string.IsNullOrWhiteSpace(query))
+            movies = movies.Where(m => m.Title.ToLower().Contains(query.ToLower()));
+
+        if (genre != "All Genres")
+        {
+            movies =  movies.Where(m=>m.Genre==genre);
+        }
+        movies =  _movieService.Sort(movies, sortBy);
+        
+        int pageSize = 12;
+        int totalMovies = movies.Count();
+        int totalPages = (int)Math.Ceiling(totalMovies / (double)pageSize);
 
         ViewBag.CurrentPage = page;
         ViewBag.TotalPages = totalPages;
@@ -34,6 +43,13 @@ public class HomeController: Controller
             Genre = mc.Genre,
             ImageUrl = mc.ImageUrl
         });
+        
+        ViewBag.SelectedGenre = genre;
+        ViewBag.SortBy = sortBy;
+        ViewBag.Query = query;
+        ViewBag.CurrentPage = page;
+        ViewBag.TotalPages = totalPages;
+        
         return View(movieCard);
     }
     

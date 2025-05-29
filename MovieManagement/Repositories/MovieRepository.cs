@@ -41,18 +41,17 @@ public class MovieRepository: IMovieRepository
     
     public async Task<IEnumerable<Movie>> SearchMoviesAsync(string query)
     {
-        query = query.Trim();
-        if (string.IsNullOrWhiteSpace(query))
+        query = query?.Trim().ToLower();
+        if (string.IsNullOrEmpty(query) || query.Length < 3)
             return Enumerable.Empty<Movie>();
 
-        query = query.Trim().ToLower();
-
-        return await _context.Movies.Where(m => m.Title.ToLower().Contains(query)).ToListAsync();
+        return await _context.Movies
+            .Where(m => m.Title.Trim().ToLower().Contains(query))
+            .ToListAsync();
     }
 
-    public IQueryable<Movie> SortMoviesAsync(string sortBy)
+    public IQueryable<Movie> SortMoviesAsync(IQueryable<Movie> movies,string sortBy)
     {
-        IQueryable<Movie> movies = _context.Movies.Include(m => m.Director);
         switch (sortBy)
         {
             case "Title": movies=movies.OrderBy(m => m.Title);
@@ -70,7 +69,6 @@ public class MovieRepository: IMovieRepository
             default: movies=movies.OrderBy(m => m.Title);
                 break;
         }
-
         return movies;
     }
 }
