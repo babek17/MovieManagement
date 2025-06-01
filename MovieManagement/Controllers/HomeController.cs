@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using MovieManagement.Entities;
 using MovieManagement.Models;
 using MovieManagement.Repositories;
 using MovieManagement.Services;
@@ -8,49 +10,45 @@ namespace MovieManagement.Controllers;
 public class HomeController: Controller
 {
     private readonly IMovieService _movieService;
+    private readonly IUserServices _userServices;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public HomeController(IMovieService movieService)
+    public HomeController(IMovieService movieService, IUserServices userServices, UserManager<ApplicationUser> userManager)
     {
         _movieService = movieService;
+        _userServices = userServices;
+        _userManager = userManager;
     }
 
-    public IActionResult Index(string sortBy= "Title", int page=1, string genre = "All Genres", string query="")
+    public async Task<IActionResult> Index(string sortBy = "Title", int page = 1, string genre = "All Genres", string query = "")
     {
+        string? userId = _userManager.GetUserId(User);
+        HashSet<int> userWatchlistMovieIds = new();
 
-        var movies = _movieService.GetAllMovies();
-        if (!string.IsNullOrWhiteSpace(query))
-            movies = movies.Where(m => m.Title.ToLower().Contains(query.ToLower()));
-
-        if (genre != "All Genres")
+        if (userId != null)
         {
-            movies =  movies.Where(m=>m.Genre==genre);
+            var userWatchlist = await _userServices.GetUserMovieCardsAsync(userId);
+            userWatchlistMovieIds = userWatchlist.Select(m => m.Id).ToHashSet();
         }
-        movies =  _movieService.Sort(movies, sortBy);
-        
-        int pageSize = 12;
-        int totalMovies = movies.Count();
-        int totalPages = (int)Math.Ceiling(totalMovies / (double)pageSize);
 
-        ViewBag.CurrentPage = page;
-        ViewBag.TotalPages = totalPages;
-
-        var movieCard = movies.Skip((page-1)*pageSize).Take(pageSize).
-            Select(mc => new MovieCard()
+        var movieQuery = new MovieQuery
         {
-            Id = mc.MovieId,
-            Title = mc.Title,
-            Year = mc.ReleaseYear,
-            Genre = mc.Genre,
-            ImageUrl = mc.ImageUrl
-        });
-        
+            SortBy = sortBy,
+            Page = page,
+            Genre = genre,
+            Query = query
+        };
+
+        var result = _movieService.GetFilteredMoviesAsync(movieQuery);
+        var movieCards = _movieService.BuildMovieCards(result.Movies, userWatchlistMovieIds);
+
+        ViewBag.CurrentPage = result.CurrentPage;
+        ViewBag.TotalPages = result.TotalPages;
         ViewBag.SelectedGenre = genre;
         ViewBag.SortBy = sortBy;
         ViewBag.Query = query;
-        ViewBag.CurrentPage = page;
-        ViewBag.TotalPages = totalPages;
-        
-        return View(movieCard);
+
+        return View(movieCards);
     }
     
     

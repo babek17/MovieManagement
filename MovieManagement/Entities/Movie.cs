@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using MovieManagement.Models;
 
 namespace MovieManagement.Entities;
 
@@ -19,5 +20,6 @@ public class Movie
     public string TrailerUrl { get; set; }
     public List<Comment> Comments { get; set; }= new List<Comment>();
     public List<ApplicationUser> Users { get; set; }= new List<ApplicationUser>();
+    public ICollection<Watchlist> WatchlistUsers { get; set; } = new List<Watchlist>();
     public string ShortDescription { get; set; }
 }

@@ -1,4 +1,5 @@
 using MovieManagement.Entities;
+using MovieManagement.Models;
 using MovieManagement.Repositories;
 
 namespace MovieManagement.Services;
@@ -32,5 +33,47 @@ public class MovieService: IMovieService
     public IQueryable<Movie> GetAllMovies()
     {
         return _movieRepository.GetAllMovies();
+    }
+    
+    public IEnumerable<MovieCard> BuildMovieCards(IEnumerable<Movie> movies, HashSet<int> userWatchlistMovieIds)
+    {
+        return movies.Select(mc => new MovieCard
+        {
+            Id = mc.MovieId,
+            Title = mc.Title,
+            Year = mc.ReleaseYear,
+            Genre = mc.Genre,
+            ImageUrl = mc.ImageUrl,
+            IsInWatchlist = userWatchlistMovieIds.Contains(mc.MovieId)
+        });
+    }
+
+    public FilteredMovieResult GetFilteredMoviesAsync(MovieQuery query)
+    {
+        var movies = _movieRepository.GetAllMovies();
+
+        if (!string.IsNullOrWhiteSpace(query.Query))
+            movies = movies.Where(m => m.Title.ToLower().Contains(query.Query.ToLower()));
+
+        if (query.Genre != "All Genres")
+            movies = movies.Where(m => m.Genre == query.Genre);
+
+        movies = Sort(movies, query.SortBy);
+
+        int totalCount = movies.Count();
+        int totalPages = (int)Math.Ceiling(totalCount / (double)query.PageSize);
+
+        var pagedMovies = movies
+            .Skip((query.Page - 1) * query.PageSize)
+            .Take(query.PageSize)
+            .ToList();
+
+        return new FilteredMovieResult
+        {
+            Movies = pagedMovies,
+            CurrentPage = query.Page,
+            TotalPages = totalPages,
+            TotalCount = totalCount
+        };
     }
 }

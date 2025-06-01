@@ -18,6 +18,8 @@
 @{
     var selectedSort = ViewBag.SortBy as string ?? "Sort";
     var query = ViewBag.Query as string ?? "";
+    var displayName = ViewContext.ActionDescriptor.DisplayName?.ToLower() ?? "";
+    var hideSortFilter = displayName.Contains("/account/");
 }
 
 <header>
@@ -53,53 +55,63 @@
                 }
             </script>
 
-            <!-- Right Side - Authentication -->
-            <ul class="navbar-nav mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
-                </li>
-            </ul>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <span style="color: white">Hello, @User.Identity.Name!</span>
+            }
+            else
+            {
+                <!-- Right Side - Authentication -->
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Login">Login</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="Identity" asp-page="/Account/Register">Register</a>
+                    </li>
+                </ul>
+            }
         </div>
     </nav>
 </header>
 
 <main role="main" class="container mt-4">
-    <!-- Sort & Filter Controls -->
-    @if (query == "")
+    @if (!hideSortFilter)
     {
-        <div class="d-flex justify-content-between align-items-center mb-4">
-        <!-- Sort Dropdown -->
-        <div class="dropdown">
-            <button class="btn btn-outline-primary dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px">
-                Sort: @selectedSort
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="sortDropdown">
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Title</a></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Rating</a></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Release Date</a></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Title Descending</a></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Rating Descending</a></li>
-                <li>
-                    <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                       asp-route-query="@ViewBag.Query">Release Date Descending</a></li>
-            </ul>
-            <!-- Filter Dropdown -->
-            @await Component.InvokeAsync("GenreFilter")
-        </div>
-    </div>
+        <!-- Sort & Filter Controls -->
+        @if (query == "")
+        {
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <!-- Sort Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-outline-dark dropdown-toggle" type="button" id="sortDropdown" data-bs-toggle="dropdown" aria-expanded="false" style="width: 200px">
+                        Sort: @selectedSort
+                    </button>
+                    <ul class="dropdown-menu" aria-labelledby="sortDropdown">
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Title</a></li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Rating</a></li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Release Date</a></li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Title Descending</a></li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Rating Descending</a></li>
+                        <li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending" asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Release Date Descending</a></li>
+                    </ul>
+                    <!-- Filter Dropdown -->
+                    @await Component.InvokeAsync("GenreFilter")
+                </div>
+            </div>
+        }
     }
     @RenderBody()
     @RenderSection("Scripts", required: false)

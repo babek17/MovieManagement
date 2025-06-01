@@ -10,9 +10,13 @@ namespace MovieManagement.Controllers;
 public class MovieController: Controller
 {
     private readonly IMovieService _movieService;
-    public MovieController(IMovieService movieService)
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserServices _userServices;
+    public MovieController(IMovieService movieService, UserManager<ApplicationUser> userManager, IUserServices userServices)
     {
         _movieService = movieService;
+        _userManager = userManager;
+        _userServices = userServices;
     }
 
     public IActionResult MovieDetails(int movieId)
@@ -39,13 +43,24 @@ public class MovieController: Controller
     {
         ViewData["query"] = query;
         var results = await _movieService.SearchAsync(query);
+        
+        string? userId = _userManager.GetUserId(User);
+        HashSet<int> userWatchlistMovieIds = new();
+        
+        if (userId != null)
+        {
+            var userWatchlist = await _userServices.GetUserMovieCardsAsync(userId);
+            userWatchlistMovieIds = userWatchlist.Select(m => m.Id).ToHashSet();
+        }
+        
         var movieCards = results.Select(m => new MovieCard
         {
             Id = m.MovieId,
             Title = m.Title,
             Year = m.ReleaseYear,
             Genre = m.Genre,
-            ImageUrl = m.ImageUrl
+            ImageUrl = m.ImageUrl,
+            IsInWatchlist = userWatchlistMovieIds.Contains(m.MovieId)
         }).ToList();
 
         if (!movieCards.Any())
