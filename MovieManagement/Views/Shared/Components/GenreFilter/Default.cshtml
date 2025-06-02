@@ -1,7 +1,6 @@
 @{
     var selectedGenre = ViewBag.SelectedGenre as string;
     var sortBy = ViewBag.SortBy as string;
-    var query = ViewBag.Query as string;
 }
 <style>
     .dropdown-menu .dropdown-item.active,
@@ -22,8 +21,7 @@
                asp-controller="Home"
                asp-action="Index"
                asp-route-genre="@genre"
-               asp-route-sortBy="@sortBy"
-               asp-route-query="@query">
+               asp-route-sortBy="@sortBy">
                 @genre
             </a>
         </li>

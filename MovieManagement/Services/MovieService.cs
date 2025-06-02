@@ -52,9 +52,6 @@ public class MovieService: IMovieService
     {
         var movies = _movieRepository.GetAllMovies();
 
-        if (!string.IsNullOrWhiteSpace(query.Query))
-            movies = movies.Where(m => m.Title.ToLower().Contains(query.Query.ToLower()));
-
         if (query.Genre != "All Genres")
             movies = movies.Where(m => m.Genre == query.Genre);
 

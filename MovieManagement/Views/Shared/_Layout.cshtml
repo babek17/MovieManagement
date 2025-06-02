@@ -37,7 +37,7 @@
             </ul>
 
             <!-- Search Form -->
-            <form class="d-flex me-3" method="get" asp-controller="Home" asp-action="Index" onsubmit="return validateSearch();">
+            <form class="d-flex me-3" method="get" asp-controller="Movie" asp-action="SearchMovies" onsubmit="return validateSearch();">
                 <input class="form-control me-2" id="searchInput" style="width: 300px;" type="search" name="query" placeholder="Search.. (at least 3 characters)" aria-label="Search">
                 <input type="hidden" name="sortBy" value="@ViewBag.SortBy"/>
                 <input type="hidden" name="genre" value="@ViewBag.SelectedGenre"/>
@@ -57,7 +57,14 @@
 
             @if (User.Identity.IsAuthenticated)
             {
-                <span style="color: white">Hello, @User.Identity.Name!</span>
+                <ul class="navbar-nav mb-2 mb-lg-0">
+                    <li class="nav-item d-flex align-items-center">
+                        <span style="color: white" class="me-2">Hello, @User.Identity.Name!</span>
+                        <form asp-area="Identity" asp-page="/Account/Logout" method="post" class="m-0" asp-route-returnUrl="/">
+                            <button type="submit" class="btn btn-link nav-link p-0">Logout</button>
+                        </form>
+                    </li>
+                </ul>
             }
             else
             {
@@ -98,14 +105,14 @@
                             <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release" asp-route-genre="@ViewBag.SelectedGenre"
                                asp-route-query="@ViewBag.Query">Release Date</a></li>
                         <li>
-                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                               asp-route-query="@ViewBag.Query">Title Descending</a></li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Title Desc." asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Title Desc.</a></li>
                         <li>
-                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                               asp-route-query="@ViewBag.Query">Rating Descending</a></li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Rating Desc." asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Rating Desc.</a></li>
                         <li>
-                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Descending" asp-route-genre="@ViewBag.SelectedGenre"
-                               asp-route-query="@ViewBag.Query">Release Date Descending</a></li>
+                            <a class="dropdown-item" asp-controller="Home" asp-action="Index" asp-route-sortBy="Release Year Desc." asp-route-genre="@ViewBag.SelectedGenre"
+                               asp-route-query="@ViewBag.Query">Release Date Desc.</a></li>
                     </ul>
                     <!-- Filter Dropdown -->
                     @await Component.InvokeAsync("GenreFilter")

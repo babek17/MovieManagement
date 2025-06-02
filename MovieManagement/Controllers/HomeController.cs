@@ -20,7 +20,7 @@ public class HomeController: Controller
         _userManager = userManager;
     }
 
-    public async Task<IActionResult> Index(string sortBy = "Title", int page = 1, string genre = "All Genres", string query = "")
+    public async Task<IActionResult> Index(string sortBy = "Title", int page = 1, string genre = "All Genres")
     {
         string? userId = _userManager.GetUserId(User);
         HashSet<int> userWatchlistMovieIds = new();
@@ -36,7 +36,6 @@ public class HomeController: Controller
             SortBy = sortBy,
             Page = page,
             Genre = genre,
-            Query = query
         };
 
         var result = _movieService.GetFilteredMoviesAsync(movieQuery);
@@ -46,8 +45,6 @@ public class HomeController: Controller
         ViewBag.TotalPages = result.TotalPages;
         ViewBag.SelectedGenre = genre;
         ViewBag.SortBy = sortBy;
-        ViewBag.Query = query;
-
         return View(movieCards);
     }
     

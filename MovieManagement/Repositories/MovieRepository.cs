@@ -56,15 +56,15 @@ public class MovieRepository: IMovieRepository
         {
             case "Title": movies=movies.OrderBy(m => m.Title);
                 break;
-            case "Title Descending": movies= movies.OrderByDescending(m => m.Title);
+            case "Title Desc.": movies= movies.OrderByDescending(m => m.Title);
                 break;
             case "Release Year": movies=movies.OrderBy(m => m.ReleaseYear);
                 break;
-            case "Release Year Descending": movies = movies.OrderByDescending(m => m.ReleaseYear);
+            case "Release Year Desc.": movies = movies.OrderByDescending(m => m.ReleaseYear);
                 break;
             case "Rating": movies=movies.OrderBy(m => m.Rating);
                 break;
-            case "Rating Descending": movies = movies.OrderByDescending(m => m.Rating);
+            case "Rating Desc.": movies = movies.OrderByDescending(m => m.Rating);
                 break;
             default: movies=movies.OrderBy(m => m.Title);
                 break;

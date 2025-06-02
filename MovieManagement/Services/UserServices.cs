@@ -64,7 +64,8 @@ public class UserServices : IUserServices
                 Title = w.Movie.Title,
                 Year = w.Movie.ReleaseYear,
                 Genre = w.Movie.Genre,
-                ImageUrl = w.Movie.ImageUrl
+                ImageUrl = w.Movie.ImageUrl,
+                IsInWatchlist = true
             }).ToList();
 
         return movieCards;
