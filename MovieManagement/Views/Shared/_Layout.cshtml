@@ -18,8 +18,9 @@
 @{
     var selectedSort = ViewBag.SortBy as string ?? "Sort";
     var query = ViewBag.Query as string ?? "";
-    var displayName = ViewContext.ActionDescriptor.DisplayName?.ToLower() ?? "";
-    var hideSortFilter = displayName.Contains("/account/");
+    var currentController = ViewContext.RouteData.Values["Controller"]?.ToString();
+    var currentAction = ViewContext.RouteData.Values["Action"]?.ToString();
+    var showSortFilter = currentController == "Home" && currentAction == "Index";
 }
 
 <header>
@@ -83,7 +84,7 @@
 </header>
 
 <main role="main" class="container mt-4">
-    @if (!hideSortFilter)
+    @if (showSortFilter)
     {
         <!-- Sort & Filter Controls -->
         @if (query == "")
