@@ -12,7 +12,8 @@ public class MovieDetails
     public int ReleaseYear { get; set; }
     public string ImageUrl { get; set; }
     public string TrailerUrl { get; set; }
-    public float Rating { get; set; } = 0;
+    public Decimal Rating { get; set; } = 0;
+    public int? UserRating { get; set; }
     public List<Comment> Comments { get; set; }= new List<Comment>();
     public string Description { get; set; }
 }

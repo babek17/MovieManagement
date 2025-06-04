@@ -1,3 +1,4 @@
+@using System.Security.Claims
 @model MovieDetails
 
 <div class="container py-5">
@@ -9,7 +10,7 @@
             <div class="col-md-8">
                 <div class="card-body p-4">
                     <h2 class="card-title mb-3">@Model.Title</h2>
-                    <p class="mb-3"><strong>Rating:</strong> ⭐ @Model.Rating / 10</p>
+                    <p class="mb-3"><strong>Rating:</strong> ⭐ @Model.Rating.ToString("0.0") / 10</p>
                     <p class="mb-2"><strong>Genre:</strong> @Model.Genre</p>
                     <p class="mb-2"><strong>Director:</strong> @Model.DirectorName</p>
                     <p class="mb-2"><strong>Running Time:</strong> @Model.RunningTime minutes</p>
@@ -41,21 +42,23 @@
     </div>
 
     <div class="mt-5">
-        <h4>Ratings</h4>
-        <p><strong>Average Rating:</strong> 0 / 10</p>
-
         @if (User.Identity.IsAuthenticated)
         {
             <form asp-controller="Movie" asp-action="RateMovie" method="post">
-                <input type="hidden" name="title" value="@Model.Title" />
-                <label for="rating">Your Rating:</label>
-                <select name="rating" class="form-select w-auto d-inline-block" required>
-                    <option disabled selected>Rate...</option>
+                <input type="hidden" name="movieId" value="@Model.Id" />
+
+                <label for="Score">
+                    @(ViewBag.UserRating != null ? "Your Rating:" : "Rate this Movie out of 10:")
+                </label>
+
+                <select name="Score" class="form-select w-auto d-inline-block" required>
                     @for (int i = 1; i <= 10; i++)
                     {
-                        <option value="@i">@i</option>
+                        bool isSelected = ViewBag.UserRating != null && (int)ViewBag.UserRating == i;
+                        <option value="@i" selected="@(isSelected ? "selected" : null)">@i</option>
                     }
                 </select>
+
                 <button type="submit" class="btn btn-primary">Submit</button>
             </form>
         }
@@ -63,17 +66,17 @@
         {
             <a asp-page="/Account/Login"
                asp-area="Identity"
-               asp-route-returnUrl="@Url.Action("MovieDetails", "Movie", new { title = Model.Title })"
+               asp-route-returnUrl="@Url.Action("MovieDetails", "Movie", new { id = Model.Id })"
                class="btn btn-primary">
                 Login to rate this movie
             </a>
         }
+
         @if (TempData["Message"] != null)
         {
             <p style="color: red">@TempData["Message"]</p>
         }
     </div>
-
 
     @if (Model.Comments?.Any() == true)
     {

@@ -11,4 +11,5 @@ public interface IMovieService
     IQueryable<Movie> GetAllMovies();
     IEnumerable<MovieCard> BuildMovieCards(IEnumerable<Movie> movies, HashSet<int> userWatchlistMovieIds);
     FilteredMovieResult GetFilteredMoviesAsync(MovieQuery query);
+    void RateMovie(int movieId, string userId, int score);
 }

@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using MovieManagement.Entities;
 using MovieManagement.Models;
 using MovieManagement.Repositories;
@@ -7,10 +8,12 @@ namespace MovieManagement.Services;
 public class MovieService: IMovieService
 {
     private readonly IMovieRepository _movieRepository;
+    private readonly IRatingRepository _ratingRepository;
 
-    public MovieService(IMovieRepository movieRepository)
+    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository)
     {
         _movieRepository = movieRepository;
+        _ratingRepository = ratingRepository;
     }
     
     public async Task<IEnumerable<Movie>> SearchAsync(string query)
@@ -44,7 +47,8 @@ public class MovieService: IMovieService
             Year = mc.ReleaseYear,
             Genre = mc.Genre,
             ImageUrl = mc.ImageUrl,
-            IsInWatchlist = userWatchlistMovieIds.Contains(mc.MovieId)
+            IsInWatchlist = userWatchlistMovieIds.Contains(mc.MovieId),
+            Rating = mc.Rating
         });
     }
 
@@ -73,4 +77,40 @@ public class MovieService: IMovieService
             TotalCount = totalCount
         };
     }
+    
+    public void RateMovie(int movieId, string userId, int score)
+    {
+        var existingRating = _ratingRepository.GetRating(userId, movieId);
+        if (existingRating != null)
+        {
+            existingRating.Score = score;
+        }
+        else
+        {
+            var newRating = new Rating
+            {
+                MovieId = movieId,
+                UserId = userId,
+                Score = score
+            };
+            _ratingRepository.AddRating(newRating);
+        }
+    
+        _ratingRepository.Save();
+    
+        var ratingsForMovie =  _ratingRepository.GetAllRatings()
+            .Where(r => r.MovieId == movieId)
+            .ToList();
+    
+        var ratingCount = ratingsForMovie.Count;
+        var averageRating = ratingCount > 0
+            ? (decimal)ratingsForMovie.Sum(r => r.Score) / ratingCount
+            : 0m;
+    
+        var movie = _movieRepository.GetMovieById(movieId);
+        movie.RatingCount = ratingCount;
+        movie.Rating = Math.Round(averageRating, 1);
+        _movieRepository.Save();
+    }
+    
 }

@@ -10,4 +10,5 @@ public interface IMovieRepository
     List<Movie> GetAllMoviesByDirector(int id);
     Task<IEnumerable<Movie>> SearchMoviesAsync(string query);
     IQueryable<Movie> SortMoviesAsync(IQueryable<Movie> movies,string sortBy);
+    void Save();
 }

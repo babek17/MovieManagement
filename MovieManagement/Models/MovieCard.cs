@@ -10,4 +10,6 @@ public class MovieCard
     public string Genre { get; set; }
     public string ImageUrl { get; set; }
     public bool IsInWatchlist { get; set; }
+    public decimal Rating { get; set; } = 0;
+
 }

@@ -1,17 +1,17 @@
 @model MovieCard
 
 <div class="card shadow-sm mb-4 d-flex flex-column" style="width: 18rem; height: 100%;">
-    <a asp-controller="Movie" asp-action="MovieDetails" asp-route-movieId="@Model.Id">
+    <a asp-controller="Movie" asp-action="MovieDetails" asp-route-id="@Model.Id">
         <img src="@Model.ImageUrl" class="card-img-top" alt="Movie Poster" style="height: 400px; object-fit: cover;">
     </a>
     <div class="card-body d-flex flex-column flex-grow-1">
         <h5 class="card-title">@Model.Title</h5>
         <p class="card-text mb-1"><strong>Genre: </strong>@Model.Genre</p>
         <p class="card-text mb-1"><strong>Release Year: </strong>@Model.Year</p>
-        <p class="card-text"><strong>Rating️: </strong>9.9/10⭐️</p>
+        <p class="card-text"><strong>Rating️: </strong>@Model.Rating.ToString("0.0")/10⭐️</p>
 
         <div class="mt-auto">
-            <a asp-controller="Movie" asp-action="MovieDetails" asp-route-movieId="@Model.Id" class="btn btn-dark w-100">View Details</a>
+            <a asp-controller="Movie" asp-action="MovieDetails" asp-route-id="@Model.Id" class="btn btn-dark w-100">View Details</a>
 
             @if (User.Identity?.IsAuthenticated ?? false)
             {

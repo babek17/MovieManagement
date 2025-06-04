@@ -1,3 +1,5 @@
+using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Entities;
@@ -19,9 +21,16 @@ public class MovieController: Controller
         _userServices = userServices;
     }
 
-    public IActionResult MovieDetails(int movieId)
+    public IActionResult MovieDetails(int id)
     {
-        var movie = _movieService.GetMovieById(movieId);
+        var movie = _movieService.GetMovieById(id);
+        int? userRating = null;
+        if (User.Identity.IsAuthenticated)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            userRating = _userServices.GetUserRating(userId, id);
+            ViewBag.UserRating = userRating;
+        }
         var movieDetails = new MovieDetails
         {
             Id = movie.MovieId, 
@@ -33,7 +42,9 @@ public class MovieController: Controller
             ReleaseYear = movie.ReleaseYear,
             RunningTime = movie.RunningTime,
             DirectorName = movie.Director.Name,
-            Description = movie.ShortDescription
+            Description = movie.ShortDescription,
+            Rating = movie.Rating,
+            UserRating = userRating,
         };
         return View(movieDetails);
     }
@@ -77,4 +88,20 @@ public class MovieController: Controller
         return RedirectToAction("Index", "Home", new { sortBy = sortBy });
     }
     
+    [HttpPost]
+    [Authorize]
+    public IActionResult RateMovie(int movieId, int score)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
+
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            throw new Exception("UserId is null!");
+        _movieService.RateMovie(movieId, userId, score);
+        TempData["Message"] = "Your rating was submitted!";
+        return RedirectToAction("MovieDetails", new { id = movieId });
+    }
 }

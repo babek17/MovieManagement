@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using MovieManagement.Repositories;
 
@@ -11,9 +12,11 @@ using MovieManagement.Repositories;
 namespace MovieManagement.Migrations
 {
     [DbContext(typeof(MovieManagementDbContext))]
-    partial class MovieManagementDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250602125335_UserIdIsStringInRating")]
+    partial class UserIdIsStringInRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -366,11 +369,16 @@ namespace MovieManagement.Migrations
 
                     b.Property<string>("UserId")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(450)");
 
                     b.HasKey("RatingId");
 
                     b.HasIndex("ApplicationUserId");
+
+                    b.HasIndex("UserId");
+
+                    b.HasIndex("MovieId", "UserId")
+                        .IsUnique();
 
                     b.ToTable("Ratings");
                 });
@@ -394,7 +402,8 @@ namespace MovieManagement.Migrations
 
                     b.HasIndex("MovieId");
 
-                    b.HasIndex("UserId");
+                    b.HasIndex("UserId", "MovieId")
+                        .IsUnique();
 
                     b.ToTable("Watchlists");
                 });
@@ -486,6 +495,18 @@ namespace MovieManagement.Migrations
                     b.HasOne("MovieManagement.Entities.ApplicationUser", null)
                         .WithMany("Ratings")
                         .HasForeignKey("ApplicationUserId");
+
+                    b.HasOne("MovieManagement.Entities.Movie", null)
+                        .WithMany()
+                        .HasForeignKey("MovieId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MovieManagement.Entities.ApplicationUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("MovieManagement.Models.Watchlist", b =>

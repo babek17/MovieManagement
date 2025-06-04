@@ -21,7 +21,7 @@ public class MovieRepository: IMovieRepository
     {
         var movie = _context.Movies.Include(m => m.Director)
             .FirstOrDefault(m => m.MovieId == id);
-        if (movie == null) throw new Exception("Movie not found");
+        if (movie == null) throw new Exception("Movie "+id+" not found");
         return movie;
     }
 
@@ -50,25 +50,38 @@ public class MovieRepository: IMovieRepository
             .ToListAsync();
     }
 
-    public IQueryable<Movie> SortMoviesAsync(IQueryable<Movie> movies,string sortBy)
+    public IQueryable<Movie> SortMoviesAsync(IQueryable<Movie> movies, string sortBy)
     {
         switch (sortBy)
         {
-            case "Title": movies=movies.OrderBy(m => m.Title);
+            case "Title":
+                movies = movies.OrderBy(m => m.Title);
                 break;
-            case "Title Desc.": movies= movies.OrderByDescending(m => m.Title);
+            case "Title Desc.":
+                movies = movies.OrderByDescending(m => m.Title);
                 break;
-            case "Release Year": movies=movies.OrderBy(m => m.ReleaseYear);
+            case "Release Year":
+                movies = movies.OrderBy(m => m.ReleaseYear);
                 break;
-            case "Release Year Desc.": movies = movies.OrderByDescending(m => m.ReleaseYear);
+            case "Release Year Desc.":
+                movies = movies.OrderByDescending(m => m.ReleaseYear);
                 break;
-            case "Rating": movies=movies.OrderBy(m => m.Rating);
+            case "Rating":
+                movies = movies.OrderBy(m => m.Rating);
                 break;
-            case "Rating Desc.": movies = movies.OrderByDescending(m => m.Rating);
+            case "Rating Desc.w":
+                movies = movies.OrderByDescending(m => m.Rating);
                 break;
-            default: movies=movies.OrderBy(m => m.Title);
+            default:
+                movies = movies.OrderBy(m => m.Title);
                 break;
         }
+
         return movies;
+    }
+    
+    public void Save()
+    {
+        _context.SaveChanges();
     }
 }

@@ -1,16 +1,19 @@
 using MovieManagement.Entities;
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Models;
+using MovieManagement.Repositories;
 
 namespace MovieManagement.Services;
 
 public class UserServices : IUserServices
 {
     private readonly IUserRepository _userRepository;
+    private readonly IRatingRepository _ratingRepository;
 
-    public UserServices(IUserRepository userRepository)
+    public UserServices(IUserRepository userRepository, IRatingRepository ratingRepository)
     {
         _userRepository = userRepository;
+        _ratingRepository = ratingRepository;
     }
 
     public async Task<bool> AddMovieAsync(string userId, Movie movie)
@@ -65,9 +68,17 @@ public class UserServices : IUserServices
                 Year = w.Movie.ReleaseYear,
                 Genre = w.Movie.Genre,
                 ImageUrl = w.Movie.ImageUrl,
-                IsInWatchlist = true
+                IsInWatchlist = true,
+                Rating = w.Movie.Rating
             }).ToList();
 
         return movieCards;
     }
+    
+    public int? GetUserRating(string userId, int movieId)
+    {
+        var rating = _ratingRepository.GetRating(userId, movieId);
+        return rating?.Score;
+    }
+    
 }

@@ -12,27 +12,9 @@ public class MovieManagementDbContext: IdentityDbContext<ApplicationUser>
     public DbSet<Director> Directors { get; set; }
     
     public DbSet<Watchlist> Watchlists { get; set; }
-
-    protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
-
-        builder.Entity<Watchlist>()
-            .HasKey(w => w.WatchlistId);
-
-        builder.Entity<Watchlist>()
-            .HasOne(w => w.User)
-            .WithMany(u => u.Watchlist)
-            .HasForeignKey(w => w.UserId);
-
-        builder.Entity<Watchlist>()
-            .HasOne(w => w.Movie)
-            .WithMany(m => m.WatchlistUsers)
-            .HasForeignKey(w => w.MovieId);
-
-        // Optionally enforce uniqueness (one movie per user only once)
-        builder.Entity<Watchlist>()
-            .HasIndex(w => new { w.UserId, w.MovieId })
-            .IsUnique();
-    }
+    
+    public DbSet<Comment> Comments { get; set; }
+    
+    public DbSet<Rating> Ratings { get; set; }
+    
 }
