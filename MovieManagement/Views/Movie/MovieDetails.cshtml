@@ -86,7 +86,7 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <li class="list-group-item">
-                        <strong>user:</strong> @comment.CommentText
+                        <strong>@comment.User.UniqueUsername:</strong> @comment.CommentText
                     </li>
                 }
             </ul>
@@ -98,6 +98,18 @@
             <h5 class="text-muted">No comments yet.</h5>
         </div>
     }
+
+    <!-- Comment form -->
+    <div class="mt-4">
+        <form asp-controller="Movie" asp-action="AddComment" method="post">
+            <div class="form-group">
+                <label for="CommentText">Add a comment:</label>
+                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+            </div>
+            <input type="hidden" name="movieId" value="@Model.Id" /> <!-- Adjust based on your model -->
+            <button type="submit" class="btn btn-dark mt-2">Submit</button>
+        </form>
+    </div>
 </div>
 
 

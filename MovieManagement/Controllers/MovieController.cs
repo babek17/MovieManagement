@@ -24,6 +24,7 @@ public class MovieController: Controller
     public IActionResult MovieDetails(int id)
     {
         var movie = _movieService.GetMovieById(id);
+        var comments = _movieService.GetCommentsForMovie(id).ToList();
         int? userRating = null;
         if (User.Identity.IsAuthenticated)
         {
@@ -35,7 +36,7 @@ public class MovieController: Controller
         {
             Id = movie.MovieId, 
             Title = movie.Title,
-            Comments = movie.Comments,
+            Comments = comments,
             Genre = movie.Genre,
             ImageUrl = movie.ImageUrl,
             TrailerUrl = movie.TrailerUrl,
@@ -104,4 +105,26 @@ public class MovieController: Controller
         TempData["Message"] = "Your rating was submitted!";
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
+    
+    [HttpPost]
+    [Authorize]
+    public IActionResult AddComment(int movieId, string comment)
+    {
+        if (string.IsNullOrWhiteSpace(comment))
+        {
+            TempData["Error"] = "Comment cannot be empty.";
+            return RedirectToAction("MovieDetails", new { id = movieId });
+        }
+        if (!User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            throw new Exception("UserId is null!");
+        _movieService.AddComment(movieId, userId, comment);
+
+        return RedirectToAction("MovieDetails", new { id = movieId });
+    }
+
 }

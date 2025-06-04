@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
  using MovieManagement.Entities;
+ using MovieManagement.Models;
  using MovieManagement.Repositories;
  
  namespace MovieManagement.Services;
@@ -21,7 +22,11 @@ using Microsoft.EntityFrameworkCore;
              .FirstOrDefaultAsync(u => u.Id == userId);
      }
  
- 
+     public async Task<ApplicationUser?> GetUserByIdAsync(string userId)
+     {
+         return await _context.Users.FirstOrDefaultAsync(u => u.Id == userId);
+     }
+     
      public async Task SaveChangesAsync()
      {
          await _context.SaveChangesAsync();

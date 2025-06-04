@@ -9,11 +9,13 @@ public class MovieService: IMovieService
 {
     private readonly IMovieRepository _movieRepository;
     private readonly IRatingRepository _ratingRepository;
+    private readonly ICommentRepository _commentRepository;
 
-    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository)
+    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository, ICommentRepository commentRepository)
     {
         _movieRepository = movieRepository;
         _ratingRepository = ratingRepository;
+        _commentRepository = commentRepository;
     }
     
     public async Task<IEnumerable<Movie>> SearchAsync(string query)
@@ -112,5 +114,24 @@ public class MovieService: IMovieService
         movie.Rating = Math.Round(averageRating, 1);
         _movieRepository.Save();
     }
-    
+
+    public IQueryable<Comment> GetCommentsForMovie(int movieId)
+    {
+       var comments = _commentRepository.GetCommentsForMovie(movieId);
+       return comments;
+    }
+
+
+    public void AddComment(int movieId, string userId, string comment)
+    {
+        var addedComment = new Comment()
+        {
+            UserId = userId,
+            CommentText = comment,
+            MovieId = movieId,
+            CommentDate = DateTime.Now
+        };
+        _commentRepository.Add(addedComment);
+        _commentRepository.Save();
+    }
 }
