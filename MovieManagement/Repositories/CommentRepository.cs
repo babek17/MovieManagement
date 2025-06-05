@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore;
+using MovieManagement.Data;
 using MovieManagement.Entities;
-
 namespace MovieManagement.Repositories;
 
 public class CommentRepository: ICommentRepository

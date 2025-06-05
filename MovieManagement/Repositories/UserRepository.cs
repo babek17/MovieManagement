@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
- using MovieManagement.Entities;
+using MovieManagement.Data;
+using MovieManagement.Entities;
  using MovieManagement.Models;
  using MovieManagement.Repositories;
  

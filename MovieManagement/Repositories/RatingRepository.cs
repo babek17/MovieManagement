@@ -1,3 +1,4 @@
+using MovieManagement.Data;
 using MovieManagement.Entities;
 
 namespace MovieManagement.Repositories;

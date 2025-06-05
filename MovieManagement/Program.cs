@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Repositories;
 using Microsoft.AspNetCore.Identity;
+using MovieManagement.Data;
 using MovieManagement.Entities;
 using MovieManagement.Services;
 
@@ -11,7 +12,9 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MovieManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = false).AddEntityFrameworkStores<MovieManagementDbContext>();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+    .AddEntityFrameworkStores<MovieManagementDbContext>()
+    .AddDefaultTokenProviders();
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
@@ -20,9 +23,14 @@ builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
-
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    await DbInitializer.SeedRolesAndAdminAsync(services);
+}
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())

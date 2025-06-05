@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using MovieManagement.Repositories;
+using MovieManagement.Data;
 
 namespace MovieManagement.ViewComponents;
 

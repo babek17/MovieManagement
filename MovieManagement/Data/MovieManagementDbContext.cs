@@ -1,11 +1,12 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Entities;
 using MovieManagement.Models;
 
-namespace MovieManagement.Repositories;
+namespace MovieManagement.Data;
 
-public class MovieManagementDbContext: IdentityDbContext<ApplicationUser>
+public class MovieManagementDbContext: IdentityDbContext<ApplicationUser, IdentityRole, string>
 {
     public MovieManagementDbContext(DbContextOptions<MovieManagementDbContext> options): base(options){}
     public DbSet<Movie> Movies { get; set; }
