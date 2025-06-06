@@ -1,0 +1,20 @@
+@model MovieManagement.Entities.Movie
+
+@{
+    ViewData["Title"] = "Confirm Delete";
+}
+
+<h2>Are you sure you want to delete this movie?</h2>
+
+<div>
+    <strong>@Model.Title</strong><br />
+    Release Year: @Model.ReleaseYear <br />
+    Genre: @Model.Genre <br />
+</div>
+
+<form asp-controller="User" asp-action="ConfirmRemoveMovie" method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="movieId" value="@Model.MovieId" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

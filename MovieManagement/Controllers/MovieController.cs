@@ -26,9 +26,12 @@ public class MovieController: Controller
         var movie = _movieService.GetMovieById(id);
         var comments = _movieService.GetCommentsForMovie(id).ToList();
         int? userRating = null;
+        HashSet<int> userWatchlistMovieIds = new();
         if (User.Identity.IsAuthenticated)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var userWatchlist =  _userServices.GetUserMovieCardsAsync(userId).Result;
+            userWatchlistMovieIds = userWatchlist.Select(m => m.Id).ToHashSet();
             userRating = _userServices.GetUserRating(userId, id);
             ViewBag.UserRating = userRating;
         }
@@ -46,6 +49,7 @@ public class MovieController: Controller
             Description = movie.ShortDescription,
             Rating = movie.Rating,
             UserRating = userRating,
+            IsInWatchlist = userWatchlistMovieIds.Contains(movie.MovieId)
         };
         return View(movieDetails);
     }

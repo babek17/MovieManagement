@@ -12,28 +12,9 @@
 
         <div class="mt-auto">
             <a asp-controller="Movie" asp-action="MovieDetails" asp-route-id="@Model.Id" class="btn btn-dark w-100">View Details</a>
-
-            @if (User.Identity?.IsAuthenticated ?? false)
-            {
-                @if (Model.IsInWatchlist)
-                {
-                    <form asp-controller="User" asp-action="RemoveMovieFromWatchlist" method="post" class="mt-2">
-                        <input type="hidden" name="movieId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-danger w-100">Remove from Watchlist</button>
-                    </form>
-                }
-                else
-                {
-                    <form asp-controller="User" asp-action="AddMovieToWatchlist" method="post" class="mt-2">
-                        <input type="hidden" name="movieId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-success w-100">Add to Watchlist</button>
-                    </form>
-                }
-            }
-            else
-            {
-                <a href="/Identity/Account/Login" class="btn btn-success w-100 mt-2">Login to Add</a>
-            }
+            
+            <partial name="_IsUserAuthenticated" model="@Model"/>
+            
         </div>
     </div>
 </div>

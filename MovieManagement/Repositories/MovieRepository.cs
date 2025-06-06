@@ -70,7 +70,7 @@ public class MovieRepository: IMovieRepository
             case "Rating":
                 movies = movies.OrderBy(m => m.Rating);
                 break;
-            case "Rating Desc.w":
+            case "Rating Desc.":
                 movies = movies.OrderByDescending(m => m.Rating);
                 break;
             default:
@@ -84,5 +84,19 @@ public class MovieRepository: IMovieRepository
     public void Save()
     {
         _context.SaveChanges();
+    }
+
+    public void Add(Movie movie)
+    {
+        _context.Movies.Add(movie);
+        Save();
+    }
+
+    public void Remove(int movieId)
+    {
+        var movie = _context.Movies.FirstOrDefault(m => m.MovieId == movieId);
+        if (movie == null) throw new Exception("Movie "+movieId+" not found");
+        _context.Movies.Remove(movie);
+        Save();
     }
 }

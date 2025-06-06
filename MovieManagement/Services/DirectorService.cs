@@ -16,4 +16,9 @@ public class DirectorService: IDirectorService
     {
         return await _directorRepository.SearchDirectorsAsync(query);
     }
+
+    public IQueryable<Director> GetAllDirectors()
+    {
+        return _directorRepository.GetAllDirectors();
+    }
 }

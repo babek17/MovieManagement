@@ -1,2 +1,13 @@
 @model List<MovieCard>
-<partial name="_MenuGrid" model="@Model"/>
+<h2>Your Watchlist</h2>
+
+@if (!Model.Any())
+{
+    <p>No movies in your watchlist yet.</p>
+}
+else
+{
+    <div class="row">
+        <partial name="_MenuGrid" model="@Model"/>
+    </div>
+}

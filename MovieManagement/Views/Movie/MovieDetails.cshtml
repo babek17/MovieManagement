@@ -1,4 +1,3 @@
-@using System.Security.Claims
 @model MovieDetails
 
 <div class="container py-5">
@@ -17,17 +16,9 @@
                     <p class="mb-2"><strong>Release Year:</strong> @Model.ReleaseYear</p>
                     <p class="mb-2"><strong>Short Description: </strong>@Model.Description</p>
                     <div class="mt-auto">
-                        @if (User.Identity?.IsAuthenticated ?? false)
-                        {
-                            <form asp-controller="User" asp-action="AddMovieToWatchlist" method="post" class="mt-2">
-                                <input type="hidden" name="movieId" value="@Model.Id" />
-                                <button type="submit" class="btn btn-success w-100">Add to Watchlist</button>
-                            </form>
-                        }
-                        else
-                        {
-                            <a href="/Identity/Account/Login" class="btn btn-success w-100 mt-2">Login to Add</a>
-                        }
+                       
+                        <partial name="_IsUserAuthenticated" model="@Model"/>
+                        
                     </div>
                 </div>
             </div>

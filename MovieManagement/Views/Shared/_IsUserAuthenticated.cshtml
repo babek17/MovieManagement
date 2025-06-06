@@ -1,0 +1,31 @@
+@if (User.Identity?.IsAuthenticated ?? false)
+{
+    @if (User.IsInRole("Admin"))
+    {
+        <form asp-controller="User" asp-action="RemoveMovie" method="get" class="mt-2">
+            <input type="hidden" name="movieId" value="@Model.Id" />
+            <button type="submit" class="btn btn-danger w-100">Delete Movie</button>
+        </form>
+    }
+    else
+    {
+        @if (Model.IsInWatchlist)
+        {
+            <form asp-controller="User" asp-action="RemoveMovieFromWatchlist" method="post" class="mt-2">
+                <input type="hidden" name="movieId" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger w-100">Remove from Watchlist</button>
+            </form>
+        }
+        else
+        {
+            <form asp-controller="User" asp-action="AddMovieToWatchlist" method="post" class="mt-2">
+                <input type="hidden" name="movieId" value="@Model.Id" />
+                <button type="submit" class="btn btn-success w-100">Add to Watchlist</button>
+            </form>
+        }
+    }
+}
+else
+{
+    <a href="/Identity/Account/Login" class="btn btn-success w-100 mt-2">Login to Add</a>
+}

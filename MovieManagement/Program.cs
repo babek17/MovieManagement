@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Repositories;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using MovieManagement.Data;
 using MovieManagement.Entities;
 using MovieManagement.Services;
@@ -12,9 +13,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<MovieManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>(t=>t.SignIn.RequireConfirmedAccount = false)
     .AddEntityFrameworkStores<MovieManagementDbContext>()
     .AddDefaultTokenProviders();
+
 builder.Services.AddScoped<IMovieRepository, MovieRepository>();
 builder.Services.AddScoped<IDirectorRepository, DirectorRepository>();
 builder.Services.AddScoped<IMovieService, MovieService>();
@@ -22,8 +24,14 @@ builder.Services.AddScoped<IDirectorService, DirectorService>();
 builder.Services.AddScoped<IUserRepository, UserRepository>();
 builder.Services.AddScoped<IRatingRepository, RatingRepository>();
 builder.Services.AddScoped<IUserServices, UserServices>();
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 builder.Services.AddScoped<ICommentRepository, CommentRepository>();
 builder.Services.AddRazorPages();
+builder.Services.ConfigureApplicationCookie(options =>
+{
+    options.LoginPath = "/Identity/Account/Login"; // ✅ default for Identity framework
+    options.AccessDeniedPath = "/Identity/Account/AccessDenied"; // optional
+});
 
 var app = builder.Build();
 using (var scope = app.Services.CreateScope())

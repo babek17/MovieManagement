@@ -134,4 +134,26 @@ public class MovieService: IMovieService
         _commentRepository.Add(addedComment);
         _commentRepository.Save();
     }
+    
+
+    public int AddMovieAsync(MovieDetails model, int movieId)
+    {
+        var movie = new Movie
+        {
+            Title = model.Title,
+            Genre = model.Genre,
+            RunningTime = model.RunningTime,
+            ReleaseYear = model.ReleaseYear,
+            ImageUrl = model.ImageUrl,
+            TrailerUrl = model.TrailerUrl,
+            ShortDescription = model.Description,
+        };
+        _movieRepository.Add(movie);
+        return movie.MovieId;
+    }
+    
+    public void RemoveMovie(int movieId)
+    {
+        _movieRepository.Remove(movieId);
+    }
 }

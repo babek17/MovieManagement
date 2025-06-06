@@ -12,9 +12,9 @@ public class DirectorRepository: IDirectorRepository
         _context = context;
     }
     
-    public List<Director> GetAllDirectors()
+    public IQueryable<Director> GetAllDirectors()
     {
-        return _context.Directors.ToList();
+        return _context.Directors;
     }
 
     public Director GetDirectorById(int id)
