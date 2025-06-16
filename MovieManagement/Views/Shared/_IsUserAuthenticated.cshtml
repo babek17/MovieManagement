@@ -6,6 +6,11 @@
             <input type="hidden" name="movieId" value="@Model.Id" />
             <button type="submit" class="btn btn-danger w-100">Delete Movie</button>
         </form>
+        
+        <form asp-controller="User" asp-action="EditMovie" method="get" class="mt-2">
+            <input type="hidden" name="movieId" value="@Model.Id" />
+            <button type="submit" class="btn btn-primary w-100">Edit Movie</button>
+        </form>
     }
     else
     {

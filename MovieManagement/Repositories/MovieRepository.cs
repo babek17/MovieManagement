@@ -99,4 +99,10 @@ public class MovieRepository: IMovieRepository
         _context.Movies.Remove(movie);
         Save();
     }
+
+    public void Update(Movie movie)
+    {
+        _context.Movies.Update(movie);
+        Save();
+    }
 }

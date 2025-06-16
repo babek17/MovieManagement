@@ -64,28 +64,66 @@ public class UserController: Controller
             if (director != null)
                 ViewBag.SelectedDirector = $"{director.Name}, {director.Age}";
         }
-        return View(model);
+        ViewBag.FormTitle = "Add New Movie";
+        ViewBag.Action = "AddNewMovie";
+        ViewBag.Method = "POST";
+        return View("_MovieForm", model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> AddNewMovie(MovieDetails model, int directorId)
     {
-        if (ModelState.IsValid)
-        {
-            return View(model);
-        }
-
         if (model.DirectorId <= 0)
         {
             ModelState.AddModelError("DirectorId", "Please select a director.");
-            return View(model);
+            return View("_MovieForm", model);
         }
 
         var rootPath = Directory.GetCurrentDirectory();
         await _movieService.AddMovieAsync(model, rootPath, directorId);
 
-        return RedirectToAction("Index", "Home"); // or wherever
+        return RedirectToAction("Index", "Home");
+    }
+    [HttpGet]
+    public IActionResult EditMovie(int movieId)
+    {
+        var model = _movieService.GetMovieById(movieId);
+        if (model == null) return NotFound();
+
+        var movieDetails = new MovieDetails()
+        {
+            Id  = model.MovieId,
+            Title  = model.Title,
+            Rating = model.Rating,
+            TrailerUrl = model.TrailerUrl,
+            DirectorId = model.DirectorId,
+            ImageUrl = model.ImageUrl,
+            Description = model.ShortDescription,
+            ReleaseYear = model.ReleaseYear,
+            Genre = model.Genre,
+            RunningTime = model.RunningTime
+        };
+        movieDetails.DirectorId = model.DirectorId;
+        movieDetails.CurrentImageUrl = model.ImageUrl;
+        ViewBag.FormTitle = "Edit Movie";
+        ViewBag.Action = "EditMovie";
+        ViewBag.Method = "POST";
+        return View("_MovieForm", movieDetails);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult EditMovie(MovieDetails model)
+    {
+        if (ModelState.IsValid)
+        {
+            return View("_MovieForm", model);
+        }
+        
+        _movieService.EditMovieAsync(model);
+
+        return RedirectToAction("Index", "Home");
     }
     
     [HttpGet]

@@ -1,22 +1,33 @@
 @model MovieDetails
 
 @{
-    ViewData["Title"] = "Add New Movie";
+    ViewData["Title"] = ViewBag.FormTitle;
     var directorIdFromUrl = Context.Request.Query["directorId"];
+    var action = ViewBag.Action as string ?? "";
+    var formTitle = ViewBag.FormTitle as string ?? "";
 }
 
-<h2 class="mb-4">Add New Movie</h2>
+<h2 class="mb-4">@formTitle</h2>
 
-<form asp-action="AddNewMovie" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+<form asp-action="@action" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
     @Html.AntiForgeryToken()
+    @Html.HiddenFor(m => m.Id)
     
-    <div class="form-group mb-3">
-        <label asp-for="DirectorName" class="form-label">Director (Write name in search and open scroll)</label>
-        @await Component.InvokeAsync("SearchDirector", new { director = ViewBag.SelectedDirector })
-        <a asp-controller="User" asp-action="AddDirector" class="btn bg-black text-white rounded-pill">Add New Director</a>
-        <input type="hidden" asp-for="DirectorId" value=@directorIdFromUrl/>
-    </div>
+    @if (formTitle == "Edit Movie")
+    {
+        @Html.HiddenFor(m => m.CurrentImageUrl)
+        @Html.HiddenFor(m => m.DirectorId)
+    }
     
+    @if (formTitle == "Add New Movie")
+    {
+        <div class="form-group mb-3">
+            <label asp-for="DirectorName" class="form-label">Director (Write name in search and open scroll)</label>
+            @await Component.InvokeAsync("SearchDirector", new { director = ViewBag.SelectedDirector })
+            <a asp-controller="User" asp-action="AddDirector" class="btn bg-black text-white rounded-pill">Add New Director</a>
+            <input type="hidden" asp-for="DirectorId" value=@directorIdFromUrl/>
+        </div> 
+    }
 
     <div class="form-group mb-3">
         <label asp-for="Title" class="form-label">Title (Ex.: Inception)</label>
@@ -25,7 +36,7 @@
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Genre" class="form-label">Genre (Ex.: Action</label>
+        <label asp-for="Genre" class="form-label">Genre (Ex.: Action)</label>
         <input asp-for="Genre" class="form-control text-capitalize" id="Genre" />
         <span asp-validation-for="Genre" class="text-danger"></span>
     </div>
@@ -42,11 +53,14 @@
         <span asp-validation-for="ReleaseYear" class="text-danger"></span>
     </div>
 
-    <div class="mb-3">
-        <label asp-for="ImageFile" class="form-label">Upload JPEG/JPG Movie Poster</label>
-        <input asp-for="ImageFile" class="form-control" type="file" id="ImageFile" accept=".jpg,.jpeg" />
-        <span asp-validation-for="ImageFile" class="text-danger"></span>
-    </div>
+    @if (formTitle == "Add New Movie")
+    {
+        <div class="mb-3">
+            <label asp-for="ImageFile" class="form-label">Upload JPEG/JPG Movie Poster</label>
+            <input asp-for="ImageFile" class="form-control" type="file" id="ImageFile" accept=".jpg,.jpeg" />
+            <span asp-validation-for="ImageFile" class="text-danger"></span>
+        </div>
+    }
 
     <div class="form-group mb-3">
         <label asp-for="TrailerUrl" class="form-label">Trailer URL (Ex.:https://www.youtube.com/watch?v=YoHD9XEInc0&t=24s)</label>
@@ -60,16 +74,11 @@
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn bg-black text-white rounded-pill">Add Movie</button>
+    <button type="submit" class="btn bg-black text-white rounded-pill">@formTitle</button>
 </form>
 
 
-@section Styles {
-    <link href="/lib/select2/css/select2.min.css" rel="stylesheet" />
-}
-
 @section Scripts {
-    <script src="/lib/select2/js/select2.min.js"></script>
     <script>
         function extractAndSetVideoId() {
             const input = document.getElementById("TrailerUrl");
@@ -87,20 +96,16 @@
             }
         }
 
-            // Preselect if we have directorIdFromUrl
-            if (directorIdFromUrl) {
-                $.ajax({
-                    url: '@Url.Action("GetDirectorById", "Director")',
-                    data: { id: directorIdFromUrl },
-                    success: function (data) {
-                        const option = new Option(data.name, data.id, true, true);
-                        $('#directorSelect').append(option).trigger('change');
-                    }
-                });
-            }
-        
-        
         function validateForm() {
+            const titleInput = document.getElementById("Title");
+            titleInput.value = titleInput.value
+                .toLowerCase()
+                .replace(/\b\w/g, char => char.toUpperCase());
+            const genreInput = document.getElementById("Genre");
+            genreInput.value = genreInput.value
+                .toLowerCase()
+                .replace(/\b\w/g, char => char.toUpperCase());
+            
             const title = document.getElementById("Title").value.trim();
             const genre = document.getElementById("Genre").value.trim();
             const runningTime = parseInt(document.getElementById("RunningTime").value);

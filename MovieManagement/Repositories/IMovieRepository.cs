@@ -13,4 +13,5 @@ public interface IMovieRepository
     void Save();
     void Add(Movie movie);
     void Remove(int movieId);
+    void Update(Movie movie);
 }

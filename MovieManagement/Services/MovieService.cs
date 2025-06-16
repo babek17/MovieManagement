@@ -136,6 +136,11 @@ public class MovieService: IMovieService
         _commentRepository.Add(addedComment);
         _commentRepository.Save();
     }
+    
+    public void RemoveMovie(int movieId)
+    {
+        _movieRepository.Remove(movieId);
+    }
 
     public async Task AddMovieAsync(MovieDetails model, string rootPath, int directorId)
     {
@@ -174,9 +179,32 @@ public class MovieService: IMovieService
         };
         _movieRepository.Add(movie);
     }
-
-    public void RemoveMovie(int movieId)
+    
+    public void EditMovieAsync(MovieDetails model)
     {
-        _movieRepository.Remove(movieId);
+        if (model == null)
+            throw new ArgumentNullException(nameof(model));
+
+        var existingMovie = _movieRepository.GetMovieById(model.Id);
+        if (existingMovie == null)
+            throw new InvalidOperationException($"Movie with ID {model.Id} not found.");
+        
+
+        existingMovie.Title = model.Title;
+        existingMovie.Genre = model.Genre;
+        existingMovie.ReleaseYear = model.ReleaseYear;
+        existingMovie.RunningTime = model.RunningTime;
+        existingMovie.ShortDescription = model.Description;
+        existingMovie.TrailerUrl = model.TrailerUrl;
+
+        existingMovie.DirectorId = model.DirectorId > 0 
+            ? model.DirectorId 
+            : existingMovie.DirectorId;
+        existingMovie.ImageUrl = string.IsNullOrEmpty(model.ImageUrl) 
+            ? model.CurrentImageUrl
+            : model.ImageUrl;
+        
+        _movieRepository.Update(existingMovie);
     }
+
 }

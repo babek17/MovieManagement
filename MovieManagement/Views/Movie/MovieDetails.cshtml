@@ -35,32 +35,38 @@
     <div class="mt-5">
         @if (User.Identity.IsAuthenticated)
         {
-            <form asp-controller="Movie" asp-action="RateMovie" method="post">
-                <input type="hidden" name="movieId" value="@Model.Id" />
+            if (!User.IsInRole("Admin"))
+            {
+                <form asp-controller="Movie" asp-action="RateMovie" method="post">
+                    <input type="hidden" name="movieId" value="@Model.Id" />
 
-                <label for="Score">
-                    @(ViewBag.UserRating != null ? "Your Rating:" : "Rate this Movie out of 10:")
-                </label>
+                    <label for="Score">
+                        @(ViewBag.UserRating != null ? "Your Rating:" : "Rate this Movie out of 10:")
+                    </label>
 
-                <select name="Score" class="form-select w-auto d-inline-block" required>
-                    @for (int i = 1; i <= 10; i++)
-                    {
-                        bool isSelected = ViewBag.UserRating != null && (int)ViewBag.UserRating == i;
-                        <option value="@i" selected="@(isSelected ? "selected" : null)">@i</option>
-                    }
-                </select>
+                    <select name="Score" class="form-select w-auto d-inline-block" required>
+                        @for (int i = 1; i <= 10; i++)
+                        {
+                            bool isSelected = ViewBag.UserRating != null && (int)ViewBag.UserRating == i;
+                            <option value="@i" selected="@(isSelected ? "selected" : null)">@i</option>
+                        }
+                    </select>
 
-                <button type="submit" class="btn btn-primary">Submit</button>
-            </form>
+                    <button type="submit" class="btn btn-primary">Submit</button>
+                </form>
+            }
         }
         else
         {
-            <a asp-page="/Account/Login"
-               asp-area="Identity"
-               asp-route-returnUrl="@Url.Action("MovieDetails", "Movie", new { id = Model.Id })"
-               class="btn btn-primary">
-                Login to rate this movie
-            </a>
+            if (!User.IsInRole("Admin"))
+            {
+                <a asp-page="/Account/Login"
+                   asp-area="Identity"
+                   asp-route-returnUrl="@Url.Action("MovieDetails", "Movie", new { id = Model.Id })"
+                   class="btn btn-primary">
+                    Login to rate this movie
+                </a>
+            }
         }
 
         @if (TempData["Message"] != null)
@@ -91,16 +97,19 @@
     }
 
     <!-- Comment form -->
-    <div class="mt-4">
-        <form asp-controller="Movie" asp-action="AddComment" method="post">
-            <div class="form-group">
-                <label for="CommentText">Add a comment:</label>
-                <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
-            </div>
-            <input type="hidden" name="movieId" value="@Model.Id" /> <!-- Adjust based on your model -->
-            <button type="submit" class="btn btn-dark mt-2">Submit</button>
-        </form>
-    </div>
+    @if (User.Identity.IsAuthenticated && !User.IsInRole("Admin"))
+    {
+        <div class="mt-4">
+            <form asp-controller="Movie" asp-action="AddComment" method="post">
+                <div class="form-group">
+                    <label for="CommentText">Add a comment:</label>
+                    <textarea class="form-control" id="comment" name="comment" rows="3" required></textarea>
+                </div>
+                <input type="hidden" name="movieId" value="@Model.Id" /> <!-- Adjust based on your model -->
+                <button type="submit" class="btn btn-dark mt-2">Submit</button>
+            </form>
+        </div>
+    }
 </div>
 
 

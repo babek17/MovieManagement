@@ -14,6 +14,7 @@ public class MovieDetails
     public int RunningTime { get; set; }
     public int ReleaseYear { get; set; }
     public string ImageUrl { get; set; }
+    public string? CurrentImageUrl { get; set; }
     public string TrailerUrl { get; set; }
     public Decimal Rating { get; set; } = 0;
     public int? UserRating { get; set; }
