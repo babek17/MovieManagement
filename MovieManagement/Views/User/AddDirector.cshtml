@@ -1,0 +1,80 @@
+@model DirectorToAdd
+
+@{
+    ViewData["Title"] = "Add New Director";
+}
+
+<h2 class="mb-4">Add New Director</h2>
+
+<form method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
+    <div class="mb-3">
+        <label asp-for="Name" class="form-label"></label>
+        <input asp-for="Name" class="form-control text-capitalize" id="Name" />
+        <span asp-validation-for="Name" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Age" class="form-label"></label>
+        <input asp-for="Age" class="form-control" type="number" id="Age" />
+        <span asp-validation-for="Age" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Bio" class="form-label"></label>
+        <textarea asp-for="Bio" class="form-control" rows="4" id="Bio"></textarea>
+        <span asp-validation-for="Bio" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="ImageFile" class="form-label"></label>
+        <input asp-for="ImageFile" class="form-control" type="file" id="ImageFile" accept=".jpg,.jpeg" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
+    </div>
+    
+    <button type="submit" class="btn bg-black text-white rounded-pill">Add New Director</button>
+</form>
+
+@section Scripts {
+    <script>
+        function validateForm() {
+            const name = document.getElementById("Name").value.trim();
+            const age = parseInt(document.getElementById("Age").value);
+            const bio = document.getElementById("Bio").value.trim();
+            const fileInput = document.getElementById("ImageFile");
+            const files = fileInput.files;
+
+            if (name === "") {
+                alert("Name is required.");
+                return false;
+            }
+
+            if (isNaN(age) || age < 1 || age > 124) {
+                alert("Age must be between 1 and 124.");
+                return false;
+            }
+
+            if (bio === "") {
+                alert("Bio is required.");
+                return false;
+            }
+
+            if (!files || files.length === 0) {
+                alert("Please upload an image file.");
+                return false;
+            }
+
+            const file = files[0];
+            const fileName = file.name;
+            const extMatch = fileName.match(/\.(jpg|jpeg)$/i);
+
+            if (!extMatch) {
+                alert("Only JPG and JPEG files are allowed.");
+                fileInput.value = "";
+                return false;
+            }
+            
+            return true;
+        }
+
+    </script>
+}

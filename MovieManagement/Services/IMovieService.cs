@@ -14,6 +14,6 @@ public interface IMovieService
     void RateMovie(int movieId, string userId, int score);
     void AddComment(int movieId, string userId, string comment);
     IQueryable<Comment> GetCommentsForMovie(int movieId);
-    int AddMovieAsync(MovieDetails model, int movieId);
     void RemoveMovie(int movieId);
+    Task AddMovieAsync(MovieDetails model, string rootPath, int directorId);
 }

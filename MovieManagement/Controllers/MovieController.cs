@@ -46,6 +46,7 @@ public class MovieController: Controller
             ReleaseYear = movie.ReleaseYear,
             RunningTime = movie.RunningTime,
             DirectorName = movie.Director.Name,
+            DirectorId = movie.DirectorId,
             Description = movie.ShortDescription,
             Rating = movie.Rating,
             UserRating = userRating,

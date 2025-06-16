@@ -53,20 +53,39 @@ public class UserController: Controller
     }
 
     [HttpGet]
-    public IActionResult AddNewMovie()
+    public IActionResult AddNewMovie(int? directorId)
     {
-        return View();
+        var model = new MovieDetails();
+        if (directorId.HasValue)
+        {
+            model.DirectorId = directorId.Value;
+            var director = _directorService.GetAllDirectors()
+                .FirstOrDefault(d => d.DirectorId == directorId.Value);
+            if (director != null)
+                ViewBag.SelectedDirector = $"{director.Name}, {director.Age}";
+        }
+        return View(model);
     }
 
     [HttpPost]
     [ValidateAntiForgeryToken]
-    public IActionResult AddNewMovie(MovieDetails model)
+    public async Task<IActionResult> AddNewMovie(MovieDetails model, int directorId)
     {
-        if (!ModelState.IsValid)
+        if (ModelState.IsValid)
+        {
             return View(model);
+        }
 
-        var movieId=_movieService.AddMovieAsync(model,model.Id);
-        return RedirectToAction("MovieDetails","Movie",new { id = movieId });
+        if (model.DirectorId <= 0)
+        {
+            ModelState.AddModelError("DirectorId", "Please select a director.");
+            return View(model);
+        }
+
+        var rootPath = Directory.GetCurrentDirectory();
+        await _movieService.AddMovieAsync(model, rootPath, directorId);
+
+        return RedirectToAction("Index", "Home"); // or wherever
     }
     
     [HttpGet]
@@ -89,4 +108,46 @@ public class UserController: Controller
         TempData["SuccessMessage"] = "Movie deleted successfully.";
         return RedirectToAction("Index", "Home");
     }
+    
+    [HttpGet]
+    public IActionResult AddDirector()
+    {
+        return View();
+    }
+    
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult AddDirector(DirectorToAdd model)
+    {
+        if (!ModelState.IsValid)
+        {
+            return View(model);
+        }
+
+        var rootPath = Directory.GetCurrentDirectory();
+        int directorId=  _directorService.AddDirectorAsync(model, rootPath);
+        return RedirectToAction("AddNewMovie",new {directorId});
+    }
+    
+    [HttpGet]
+    public IActionResult RemoveDirector(int directorId)
+    {
+        var director = _directorService.GetDirectorById(directorId);
+        if (director == null)
+        {
+            return NotFound();
+        }
+
+        return View(director);
+    }
+
+    [HttpPost]
+    [ValidateAntiForgeryToken]
+    public IActionResult ConfirmRemoveDirector(int directorId)
+    {
+        _directorService.RemoveDirector(directorId);
+        TempData["SuccessMessage"] = "Director deleted successfully.";
+        return RedirectToAction("Index", "Home");
+    }
+    
 }

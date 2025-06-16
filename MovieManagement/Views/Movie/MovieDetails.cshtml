@@ -11,7 +11,7 @@
                     <h2 class="card-title mb-3">@Model.Title</h2>
                     <p class="mb-3"><strong>Rating:</strong> ⭐ @Model.Rating.ToString("0.0") / 10</p>
                     <p class="mb-2"><strong>Genre:</strong> @Model.Genre</p>
-                    <p class="mb-2"><strong>Director:</strong> @Model.DirectorName</p>
+                    <p class="mb-2"><strong>Director:</strong> <a asp-controller="Director" asp-action="DirectorDetails" asp-route-id="@Model.DirectorId">@Model.DirectorName</a></p>
                     <p class="mb-2"><strong>Running Time:</strong> @Model.RunningTime minutes</p>
                     <p class="mb-2"><strong>Release Year:</strong> @Model.ReleaseYear</p>
                     <p class="mb-2"><strong>Short Description: </strong>@Model.Description</p>

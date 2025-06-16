@@ -1,0 +1,19 @@
+@model MovieManagement.Entities.Director
+@{
+    ViewData["Title"] = "Confirm Delete";
+}
+
+<h2>Are you sure you want to delete this director?</h2>
+
+<div>
+    <strong>@Model.Name</strong><br />
+    Age: @Model.Age <br />
+    Bio: @Model.Bio <br />
+</div>
+
+<form asp-controller="User" asp-action="ConfirmRemoveDirector" asp-route-directorId=@Model.DirectorId method="post">
+    @Html.AntiForgeryToken()
+    <input type="hidden" name="directorId" value="@Model.DirectorId" />
+    <button type="submit" class="btn btn-danger">Yes, Delete</button>
+    <a asp-controller="Home" asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>

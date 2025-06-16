@@ -10,12 +10,14 @@ public class MovieService: IMovieService
     private readonly IMovieRepository _movieRepository;
     private readonly IRatingRepository _ratingRepository;
     private readonly ICommentRepository _commentRepository;
+    private readonly IDirectorService _directorService;
 
-    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository, ICommentRepository commentRepository)
+    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository, ICommentRepository commentRepository, IDirectorService directorService)
     {
         _movieRepository = movieRepository;
         _ratingRepository = ratingRepository;
         _commentRepository = commentRepository;
+        _directorService = directorService;
     }
     
     public async Task<IEnumerable<Movie>> SearchAsync(string query)
@@ -134,24 +136,45 @@ public class MovieService: IMovieService
         _commentRepository.Add(addedComment);
         _commentRepository.Save();
     }
-    
 
-    public int AddMovieAsync(MovieDetails model, int movieId)
+    public async Task AddMovieAsync(MovieDetails model, string rootPath, int directorId)
     {
-        var movie = new Movie
+        if (model == null)
+            throw new ArgumentNullException(nameof(model));
+        string imagePath = null;
+        
+        if (model.ImageFile != null && model.ImageFile.Length > 0)
+        {
+            var uploadsFolder = Path.Combine(rootPath, "wwwroot", "Images", "Movies");
+            if (!Directory.Exists(uploadsFolder))
+            {
+                Directory.CreateDirectory(uploadsFolder);
+            }
+
+            var uniqueFileName = model.Title.ToLower().Trim().Replace(" ", "_") + Guid.NewGuid() + Path.GetExtension(model.ImageFile.FileName);
+            var filePath = Path.Combine(uploadsFolder, uniqueFileName);
+
+            using (var fileStream = new FileStream(filePath, FileMode.Create))
+            {
+                await model.ImageFile.CopyToAsync(fileStream);
+            }
+
+            imagePath = $"/Images/Movies/{uniqueFileName}";
+        }
+        var movie = new Movie()
         {
             Title = model.Title,
             Genre = model.Genre,
-            RunningTime = model.RunningTime,
+            ImageUrl = imagePath,
+            DirectorId = directorId,
             ReleaseYear = model.ReleaseYear,
-            ImageUrl = model.ImageUrl,
-            TrailerUrl = model.TrailerUrl,
+            RunningTime = model.RunningTime,
             ShortDescription = model.Description,
+            TrailerUrl = model.TrailerUrl
         };
         _movieRepository.Add(movie);
-        return movie.MovieId;
     }
-    
+
     public void RemoveMovie(int movieId)
     {
         _movieRepository.Remove(movieId);

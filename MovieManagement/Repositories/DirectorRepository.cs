@@ -17,6 +17,12 @@ public class DirectorRepository: IDirectorRepository
         return _context.Directors;
     }
 
+    public int GetDirectorIdByName(string name)
+    {
+        var director = GetDirectorByName(name);
+        return director.DirectorId;
+    }
+
     public Director GetDirectorById(int id)
     {
         if (_context.Directors.Any(d => d.DirectorId == id)) return _context.Directors.Find(id);
@@ -29,15 +35,33 @@ public class DirectorRepository: IDirectorRepository
         throw new Exception("Director not found");    
     }
     
-    public async Task<IEnumerable<Director>> SearchDirectorsAsync(string query)
+    public IQueryable<Director> SearchDirectors(string search)
     {
-        query = query.Trim();
-        if (string.IsNullOrWhiteSpace(query))
-            return Enumerable.Empty<Director>();
-
-        query = query.Trim().ToLower();
-
-        return await _context.Directors.Where(d => d.Name.ToLower().Contains(query)).ToListAsync();
+        var query = _context.Directors.AsQueryable();
+        if (!string.IsNullOrWhiteSpace(search))
+        {
+            query = query.Where(d => d.Name.Contains(search));
+        }
+        return query;
     }
 
+    public void AddDirector(Director director)
+    {
+        _context.Directors.Add(director);
+        Save();
+    }
+
+    public void Save()
+    {
+        _context.SaveChanges();
+    }
+    
+    public void Remove(int directorId)
+    {
+        var director = _context.Directors.FirstOrDefault(m => m.DirectorId == directorId);
+        if (director == null) throw new Exception("Movie "+directorId+" not found");
+        _context.Directors.Remove(director);
+        Save();
+    }
+    
 }

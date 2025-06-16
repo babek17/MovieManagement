@@ -1,0 +1,55 @@
+@model DirectorDetails
+<title>Director Details</title>
+
+<style>
+    .container {
+        max-width: 800px;
+    }
+    .movie-poster {
+        width: auto; /* Set a fixed width for the image */
+        height: 400px;
+        border-radius: 10px;
+        float: left; /* Float the image to the left */
+        margin-right: 20px; /* Space between image and text */
+    }
+    .movie-details {
+        overflow: hidden; /* Clear the float so text wraps correctly */
+        clear: both; /* Clears the float so that the text wraps correctly */
+
+    }
+    .movie-description {
+        margin-top: 10px;
+        font-size: 20px;
+        color: black;
+    }
+</style>
+
+<!-- Navigation Bar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Director Details</a>
+    </div>
+</nav>
+
+<div class="container">
+    <div class="d-flex mb-4">
+        <img src="@Model.Director.ImageUrl" alt="Director Poster" class="movie-poster">
+        <div class="movie-details ms-4">
+            <h2>@Model.Director.Name</h2>
+            <p>Age: <strong>@Model.Director.Age</strong></p>
+            @if (User.Identity.IsAuthenticated)
+            {
+                if (User.IsInRole("Admin"))
+                {
+                    <form asp-controller="User" asp-action="RemoveDirector" method="get">
+                        <input type="hidden" name="directorId" value="@Model.Director.DirectorId" />
+                        <button type="submit" class="btn btn-primary watchlist-btn">Remove Director</button>
+                    </form>
+                }
+            }
+            <p>@Model.Director.Bio</p>
+        </div>
+    </div>
+</div>
+<h3><strong>@Model.Director.Name's Movies</strong></h3>
+<partial name="_MenuGrid" model="@Model.MovieCards"/>

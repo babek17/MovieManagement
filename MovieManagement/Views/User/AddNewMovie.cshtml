@@ -2,60 +2,161 @@
 
 @{
     ViewData["Title"] = "Add New Movie";
+    var directorIdFromUrl = Context.Request.Query["directorId"];
 }
 
 <h2 class="mb-4">Add New Movie</h2>
 
-<form asp-action="AddNewMovie" method="post">
+<form asp-action="AddNewMovie" method="post" enctype="multipart/form-data" onsubmit="return validateForm()">
     @Html.AntiForgeryToken()
+    
+    <div class="form-group mb-3">
+        <label asp-for="DirectorName" class="form-label">Director (Write name in search and open scroll)</label>
+        @await Component.InvokeAsync("SearchDirector", new { director = ViewBag.SelectedDirector })
+        <a asp-controller="User" asp-action="AddDirector" class="btn bg-black text-white rounded-pill">Add New Director</a>
+        <input type="hidden" asp-for="DirectorId" value=@directorIdFromUrl/>
+    </div>
+    
 
     <div class="form-group mb-3">
-        <label asp-for="Title" class="form-label"></label>
-        <input asp-for="Title" class="form-control" />
+        <label asp-for="Title" class="form-label">Title (Ex.: Inception)</label>
+        <input asp-for="Title" class="form-control text-capitalize" id="Title" />
         <span asp-validation-for="Title" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="Genre" class="form-label"></label>
-        <input asp-for="Genre" class="form-control" />
+        <label asp-for="Genre" class="form-label">Genre (Ex.: Action</label>
+        <input asp-for="Genre" class="form-control text-capitalize" id="Genre" />
         <span asp-validation-for="Genre" class="text-danger"></span>
     </div>
-
+    
     <div class="form-group mb-3">
-        <label asp-for="DirectorName" class="form-label"></label>
-        <input asp-for="DirectorName" class="form-control" />
-        <span asp-validation-for="DirectorName" class="text-danger"></span>
-    </div>
-
-    <div class="form-group mb-3">
-        <label asp-for="RunningTime" class="form-label"></label>
-        <input asp-for="RunningTime" type="number" class="form-control" />
+        <label asp-for="RunningTime" class="form-label">Running Time (in minutes)</label>
+        <input asp-for="RunningTime" type="number" class="form-control" id="RunningTime" />
         <span asp-validation-for="RunningTime" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="ReleaseYear" class="form-label"></label>
-        <input asp-for="ReleaseYear" type="number" class="form-control" />
+        <label asp-for="ReleaseYear" class="form-label">Release Year (Ex.: 2010)</label>
+        <input asp-for="ReleaseYear" type="number" class="form-control" id="ReleaseYear" />
         <span asp-validation-for="ReleaseYear" class="text-danger"></span>
     </div>
 
-    <div class="form-group mb-3">
-        <label asp-for="ImageUrl" class="form-label"></label>
-        <input asp-for="ImageUrl" class="form-control" />
-        <span asp-validation-for="ImageUrl" class="text-danger"></span>
+    <div class="mb-3">
+        <label asp-for="ImageFile" class="form-label">Upload JPEG/JPG Movie Poster</label>
+        <input asp-for="ImageFile" class="form-control" type="file" id="ImageFile" accept=".jpg,.jpeg" />
+        <span asp-validation-for="ImageFile" class="text-danger"></span>
     </div>
 
     <div class="form-group mb-3">
-        <label asp-for="TrailerUrl" class="form-label"></label>
-        <input asp-for="TrailerUrl" class="form-control" />
+        <label asp-for="TrailerUrl" class="form-label">Trailer URL (Ex.:https://www.youtube.com/watch?v=YoHD9XEInc0&t=24s)</label>
+        <input asp-for="TrailerUrl" class="form-control" id="TrailerUrl" onblur="extractAndSetVideoId()" />
         <span asp-validation-for="TrailerUrl" class="text-danger"></span>
     </div>
-
+    
     <div class="form-group mb-3">
-        <label asp-for="Description" class="form-label"></label>
-        <textarea asp-for="Description" class="form-control" rows="4"></textarea>
+        <label asp-for="Description" class="form-label">Short Description of Movie</label>
+        <textarea asp-for="Description" class="form-control" rows="4" id="Description"></textarea>
         <span asp-validation-for="Description" class="text-danger"></span>
     </div>
 
-    <button type="submit" class="btn btn-primary">Add Movie</button>
+    <button type="submit" class="btn bg-black text-white rounded-pill">Add Movie</button>
 </form>
+
+
+@section Styles {
+    <link href="/lib/select2/css/select2.min.css" rel="stylesheet" />
+}
+
+@section Scripts {
+    <script src="/lib/select2/js/select2.min.js"></script>
+    <script>
+        function extractAndSetVideoId() {
+            const input = document.getElementById("TrailerUrl");
+            const url = input.value;
+
+            try {
+                const parsedUrl = new URL(url);
+                const videoId = parsedUrl.searchParams.get("v");
+
+                if (videoId) {
+                    input.value = videoId; // Replace full URL with just the video ID
+                }
+            } catch (e) {
+                // If it's not a valid URL, do nothing or handle as needed
+            }
+        }
+
+            // Preselect if we have directorIdFromUrl
+            if (directorIdFromUrl) {
+                $.ajax({
+                    url: '@Url.Action("GetDirectorById", "Director")',
+                    data: { id: directorIdFromUrl },
+                    success: function (data) {
+                        const option = new Option(data.name, data.id, true, true);
+                        $('#directorSelect').append(option).trigger('change');
+                    }
+                });
+            }
+        
+        
+        function validateForm() {
+            const title = document.getElementById("Title").value.trim();
+            const genre = document.getElementById("Genre").value.trim();
+            const runningTime = parseInt(document.getElementById("RunningTime").value);
+            const releaseYear = parseInt(document.getElementById("ReleaseYear").value);
+            const description = document.getElementById("Description").value.trim();
+            const fileInput = document.getElementById("ImageFile");
+            const files = fileInput.files;
+            const directorId = document.getElementById("directorSelect").value;
+
+            if (!directorId || parseInt(directorId) <= 0) {
+                alert("Please select a director from the list.");
+                return false;
+            }
+
+            if (title === "") {
+                alert("Title is required.");
+                return false;
+            }
+            
+            if (genre === "") {
+                alert("Genre is required.");
+                return false;
+            }
+
+            if (isNaN(runningTime) || runningTime < 0) {
+                alert("Running Time must be more than 0.");
+                return false;
+            }
+            
+            if (isNaN(releaseYear) || releaseYear < 1888 || releaseYear > @DateTime.Now.Year) {
+                alert("Release Year must be between 1888 and @DateTime.Now.Year.");
+                return false;
+            }
+
+            if (description=== "") {
+                alert("Short Description is required.");
+                return false;
+            }
+
+            if (!files || files.length === 0) {
+                alert("Please upload an image file.");
+                return false;
+            }
+
+            const file = files[0];
+            const fileName = file.name;
+            const extMatch = fileName.match(/\.(jpg|jpeg)$/i);
+
+            if (!extMatch) {
+                alert("Only JPG and JPEG files are allowed.");
+                fileInput.value = "";
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
+}
+

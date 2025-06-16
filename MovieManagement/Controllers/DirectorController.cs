@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using MovieManagement.Entities;
+using MovieManagement.Models;
 using MovieManagement.Repositories;
 using MovieManagement.Services;
 
@@ -7,22 +9,49 @@ namespace MovieManagement.Controllers;
 
 public class DirectorController: Controller
 {
-    private readonly IDirectorRepository _directorRepository;
     private readonly IDirectorService _directorService;
-    public DirectorController(IDirectorRepository directorRepository, IDirectorService directorService)
+    private readonly IMovieService _movieService;
+    private readonly UserManager<ApplicationUser> _userManager;
+    private readonly IUserServices _userServices;
+    public DirectorController(IDirectorService directorService, IMovieService movieService, UserManager<ApplicationUser> userManager, IUserServices userServices)
     {
-        _directorRepository = directorRepository;
         _directorService = directorService;
+        _movieService = movieService;
+        _userManager = userManager;
+        _userServices = userServices;
     }
-    
-    [HttpGet("search")]
-    public async Task<IActionResult> SearchDirectors([FromQuery] string query)
+
+    [HttpGet]
+    public IActionResult DirectorNotFound()
     {
-        var results = await _directorService.SearchAsync(query);
+        return View();
+    }
 
-        if (!results.Any())
-            return NotFound("No directors matched your query.");
+    [HttpGet]
+    public async Task<IActionResult> DirectorDetails(int id)
+    {
+        var director = _directorService.GetDirectorById(id);
+        if (director == null)
+        {
+            return RedirectToAction("DirectorNotFound");
+        }
+        string? userId = _userManager.GetUserId(User);
+        HashSet<int> userWatchlistMovieIds = new();
 
-        return Ok(results);
+        if (userId != null)
+        {
+            var userWatchlist = await _userServices.GetUserMovieCardsAsync(userId);
+            userWatchlistMovieIds = userWatchlist.Select(m => m.Id).ToHashSet();
+        }
+
+        var movies = _movieService.GetAllMovies().Where(m => m.DirectorId == id);
+        var movieCards = _movieService.BuildMovieCards(movies, userWatchlistMovieIds);
+        
+        var directorDetails = new DirectorDetails()
+        {
+            Director = director,
+            MovieCards = movieCards
+        };
+        return View(directorDetails);
     }
 }
