@@ -79,6 +79,12 @@ namespace MovieManagement.Areas.Identity.Pages.Account
             [EmailAddress]
             [Display(Name = "Email")]
             public string Email { get; set; }
+            
+            [Required]
+            [StringLength(30, ErrorMessage = "Username must be between {2} and {1} characters.", MinimumLength = 3)]
+            [Display(Name = "Username")]
+            public string Username { get; set; }
+
 
             /// <summary>
             ///     This API supports the ASP.NET Core Identity default UI infrastructure and is not intended to be used
@@ -99,10 +105,6 @@ namespace MovieManagement.Areas.Identity.Pages.Account
             [Compare("Password", ErrorMessage = "The password and confirmation password do not match.")]
             public string ConfirmPassword { get; set; }
             
-            
-            [Required]
-            [Display(Name = "Username")]
-            public string Username { get; set; }
         }
 
 
@@ -120,10 +122,9 @@ namespace MovieManagement.Areas.Identity.Pages.Account
             {
                 var user = CreateUser();
 
-                await _userStore.SetUserNameAsync(user, Input.Email, CancellationToken.None);
                 await _emailStore.SetEmailAsync(user, Input.
                     Email, CancellationToken.None);
-                user.UniqueUsername = Input.Username;
+                await _userStore.SetUserNameAsync(user, Input.Username, CancellationToken.None);
                 var result = await _userManager.CreateAsync(user, Input.Password);
 
                 if (result.Succeeded)

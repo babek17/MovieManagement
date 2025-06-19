@@ -84,6 +84,6 @@ public class UserServices : IUserServices
     public async Task<string?> GetUsernameByIdAsync(string userId)
     {
         var user = await _userRepository.GetUserByIdAsync(userId);
-        return user?.UniqueUsername;
+        return user?.UserName;
     }
 }

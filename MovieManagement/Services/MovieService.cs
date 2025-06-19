@@ -172,6 +172,7 @@ public class MovieService: IMovieService
             Genre = model.Genre,
             ImageUrl = imagePath,
             DirectorId = directorId,
+            Director = _directorService.GetDirectorById(directorId),
             ReleaseYear = model.ReleaseYear,
             RunningTime = model.RunningTime,
             ShortDescription = model.Description,

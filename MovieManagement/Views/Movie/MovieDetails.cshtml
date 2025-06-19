@@ -83,7 +83,7 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <li class="list-group-item">
-                        <strong>@comment.User.UniqueUsername:</strong> @comment.CommentText
+                        <strong>@comment.User.UserName:</strong> @comment.CommentText
                     </li>
                 }
             </ul>
