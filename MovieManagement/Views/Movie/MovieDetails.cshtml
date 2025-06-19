@@ -83,7 +83,9 @@
                 @foreach (var comment in Model.Comments)
                 {
                     <li class="list-group-item">
-                        <strong>@comment.User.UserName:</strong> @comment.CommentText
+                        <strong class="text">@comment.User.UserName</strong> 
+                        <small class="text-muted">— @comment.CommentDate.ToString("MMM dd, yyyy")</small><br />
+                        @comment.CommentText
                     </li>
                 }
             </ul>
