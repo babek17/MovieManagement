@@ -72,7 +72,7 @@ public class DirectorService: IDirectorService
         var director = new Director
         {
             Name = model.Name,
-            Age = model.Age,
+            DateOfBirth = model.DateOfBirth,
             Bio = model.Bio,
             ImageUrl = imagePath,
             Movies = new List<Movie>()
@@ -81,6 +81,6 @@ public class DirectorService: IDirectorService
         _directorRepository.AddDirector(director);
         return director.DirectorId;
     }
-    
+
     
 }

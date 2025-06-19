@@ -36,7 +36,7 @@
         <img src="@Model.Director.ImageUrl" alt="Director Poster" class="movie-poster">
         <div class="movie-details ms-4">
             <h2>@Model.Director.Name</h2>
-            <p>Age: <strong>@Model.Director.Age</strong></p>
+            <p>Born Date: <strong>@Model.Director.DateOfBirth.ToString("yyyy-MM-dd")</strong></p>
             @if (User.Identity.IsAuthenticated)
             {
                 if (User.IsInRole("Admin"))

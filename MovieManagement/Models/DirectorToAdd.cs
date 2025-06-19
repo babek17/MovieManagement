@@ -9,4 +9,6 @@ public class DirectorToAdd
     public string Bio { get; set; }
     public IFormFile ImageFile { get; set; }
     public int Age { get; set; }
+    
+    public DateTime DateOfBirth { get; set; }
 }

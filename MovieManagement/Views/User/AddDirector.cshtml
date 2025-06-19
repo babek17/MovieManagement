@@ -14,9 +14,9 @@
     </div>
 
     <div class="mb-3">
-        <label asp-for="Age" class="form-label"></label>
-        <input asp-for="Age" class="form-control" type="number" id="Age" />
-        <span asp-validation-for="Age" class="text-danger"></span>
+        <label asp-for="DateOfBirth" class="form-label"></label>
+        <input asp-for="DateOfBirth" class="form-control" type="date" id="DateOfBirth" />
+        <span asp-validation-for="DateOfBirth" class="text-danger"></span>
     </div>
 
     <div class="mb-3">
@@ -42,6 +42,12 @@
             const bio = document.getElementById("Bio").value.trim();
             const fileInput = document.getElementById("ImageFile");
             const files = fileInput.files;
+            const dob = document.getElementById("DateOfBirth").value;
+
+            if (!dob) {
+                alert("Date of Birth is required.");
+                return false;
+            }
 
             if (name === "") {
                 alert("Name is required.");
