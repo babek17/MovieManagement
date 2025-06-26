@@ -44,7 +44,9 @@ Shows the main movie list with search and filter functionality.
 
 Displays full movie information, user comments, and the "Add to Favorites" button.
 
-![Movie Details](assets/movie-details.png)
+![Movie Details](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/movie-details-1.png)
+![Movie Details](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/movie-details-2.png)
+
 
 ---
 
@@ -52,7 +54,9 @@ Displays full movie information, user comments, and the "Add to Favorites" butto
 
 Used by admins to create new movies, including title, genre, director, and image upload.
 
-![Add Movie](assets/add-movie.png)
+![Add Movie](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/add-movie-1.png)
+![Add Movie](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/add-movie-2.png)
+
 
 ---
 
@@ -60,7 +64,7 @@ Used by admins to create new movies, including title, genre, director, and image
 
 Shows dynamic director search or modal to create a new director if not found.
 
-![Director Search](assets/director-search.png)
+![Director Search](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/add-director.png)
 
 ---
 
@@ -68,17 +72,7 @@ Shows dynamic director search or modal to create a new director if not found.
 
 Displays the list of movies a user has added to their favorites.
 
-![Favorites Page](assets/favorites.png)
-
----
-
-### 🔐 6. Login / Register Page
-
-Simple user authentication with ASP.NET Identity integration.
-
-![Login Page](assets/login.png)
-
-
+![Favorites Page](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/watchlist.png)
 
 ---
 
