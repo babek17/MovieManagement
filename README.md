@@ -45,7 +45,7 @@ Shows the main movie list with search and filter functionality.
 Displays full movie information, user comments, and the "Add to Favorites" button.
 
 ![Movie Details](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/movie-details-1.png)
-![Movie Details](https://github.com/babek17/MovieManagement/blob/2271a1a2f187d6053d2bab1f657b0d2c563998ed/movie-details-2.png)
+![Movie Details](https://github.com/babek17/MovieManagement/blob/7cd228c130ca9a9291e9273d3083c4af79c9bdd0/movie-details-2.png)
 
 
 ---
