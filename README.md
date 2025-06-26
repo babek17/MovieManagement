@@ -36,7 +36,7 @@ A web-based application for managing movies, directors, user favorites, and comm
 
 Shows the main movie list with search and filter functionality.
 
-![Movie List]([assets/movie-list.png](https://github.com/babek17/MovieManagement/blob/aa7896aebc1655c666275cb35d4ba38b23458f3b/movie-list.png))
+![Movie List](https://github.com/babek17/MovieManagement/blob/aa7896aebc1655c666275cb35d4ba38b23458f3b/movie-list.png)
 
 ---
 
