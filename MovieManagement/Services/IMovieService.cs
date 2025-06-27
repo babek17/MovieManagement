@@ -12,8 +12,8 @@ public interface IMovieService
     IEnumerable<MovieCard> BuildMovieCards(IEnumerable<Movie> movies, HashSet<int> userWatchlistMovieIds);
     FilteredMovieResult GetFilteredMoviesAsync(MovieQuery query);
     void RateMovie(int movieId, string userId, int score);
-    void AddComment(int movieId, string userId, string comment);
-    IQueryable<Comment> GetCommentsForMovie(int movieId);
+    Task AddCommentAsync(string userId, int movieId, string commentText);
+    Task<List<Comment>> GetCommentsForMovie(int movieId);
     void RemoveMovie(int movieId);
     Task AddMovieAsync(MovieDetails model, string rootPath, int directorId);
     void EditMovieAsync(MovieDetails model);

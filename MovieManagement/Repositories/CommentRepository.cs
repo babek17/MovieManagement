@@ -1,34 +1,31 @@
-using Microsoft.EntityFrameworkCore;
-using MovieManagement.Data;
+using MongoDB.Driver;
 using MovieManagement.Entities;
-namespace MovieManagement.Repositories;
+using Microsoft.Extensions.Options;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-public class CommentRepository: ICommentRepository
+namespace MovieManagement.Repositories
 {
-    private readonly MovieManagementDbContext _context;
+    public class CommentRepository: ICommentRepository
+    {
+        private readonly IMongoCollection<Comment> _comments;
 
-    public CommentRepository(MovieManagementDbContext context)
-    {
-        _context = context;
-    }
-    
-    public void Save()
-    {
-        _context.SaveChanges();
-    }
-    
-    public void Add(Comment comment)
-    {
-        _context.Comments.Add(comment);
-    }
+        public CommentRepository(IConfiguration config)
+        {
+            var client = new MongoClient(config["MongoDBSettings:ConnectionString"]);
+            var database = client.GetDatabase(config["MongoDBSettings:DatabaseName"]);
+            _comments = database.GetCollection<Comment>(config["MongoDBSettings:CommentsCollectionName"]);
+        }
 
-    public IQueryable<Comment> GetCommentsForMovie(int movieId)
-    {
-        var comments = _context.Comments
-            .Include(c => c.User)
-            .Where(c => c.MovieId == movieId);
-        return comments;
+        public async Task AddAsync(Comment comment)
+        {
+            await _comments.InsertOneAsync(comment);
+        }
+
+        public async Task<List<Comment>> GetCommentsForMovieAsync(int movieId)
+        {
+            var filter = Builders<Comment>.Filter.Eq(c => c.MovieId, movieId);
+            return await _comments.Find(filter).ToListAsync();
+        }
     }
-    
-    
 }

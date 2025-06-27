@@ -13,9 +13,6 @@ public class MovieManagementDbContext: IdentityDbContext<ApplicationUser, Identi
     public DbSet<Director> Directors { get; set; }
     
     public DbSet<Watchlist> Watchlists { get; set; }
-    
-    public DbSet<Comment> Comments { get; set; }
-    
     public DbSet<Rating> Ratings { get; set; }
     
 }

@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Entities;
 using MovieManagement.Models;
@@ -11,13 +12,17 @@ public class MovieService: IMovieService
     private readonly IRatingRepository _ratingRepository;
     private readonly ICommentRepository _commentRepository;
     private readonly IDirectorService _directorService;
+    private readonly UserManager<ApplicationUser> _userManager;
 
-    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository, ICommentRepository commentRepository, IDirectorService directorService)
+    public MovieService(IMovieRepository movieRepository, IRatingRepository ratingRepository, 
+        ICommentRepository commentRepository, IDirectorService directorService,
+            UserManager<ApplicationUser> userManager)
     {
         _movieRepository = movieRepository;
         _ratingRepository = ratingRepository;
         _commentRepository = commentRepository;
         _directorService = directorService;
+        _userManager = userManager;
     }
     
     public async Task<IEnumerable<Movie>> SearchAsync(string query)
@@ -116,25 +121,28 @@ public class MovieService: IMovieService
         movie.Rating = Math.Round(averageRating, 1);
         _movieRepository.Save();
     }
-
-    public IQueryable<Comment> GetCommentsForMovie(int movieId)
+    
+    public async Task<List<Comment>> GetCommentsForMovie(int movieId)
     {
-       var comments = _commentRepository.GetCommentsForMovie(movieId);
+       var comments = await _commentRepository.GetCommentsForMovieAsync(movieId);
        return comments;
     }
-
-
-    public void AddComment(int movieId, string userId, string comment)
+    
+    public async Task AddCommentAsync(string userId, int movieId, string commentText)
     {
-        var addedComment = new Comment()
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) throw new Exception("User not found");
+
+        var comment = new Comment
         {
-            UserId = userId,
-            CommentText = comment,
             MovieId = movieId,
-            CommentDate = DateTime.Now
+            UserId = userId,
+            UserName = user.UserName,
+            CommentText = commentText,
+            CommentDate = DateTime.UtcNow
         };
-        _commentRepository.Add(addedComment);
-        _commentRepository.Save();
+
+        await _commentRepository.AddAsync(comment);
     }
     
     public void RemoveMovie(int movieId)

@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using MovieManagement.Repositories;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
+using MongoDB.Driver;
 using MovieManagement.Data;
 using MovieManagement.Entities;
 using MovieManagement.Services;
@@ -10,6 +11,12 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.Configure<MovieManagement.Data.MongoDB>(builder.Configuration.GetSection("MongoDBSettings"));
+builder.Services.AddSingleton<IMongoClient>(s =>
+{
+    var settings = builder.Configuration.GetSection("MongoDBSettings").Get<MovieManagement.Data.MongoDB>();
+    return new MongoClient(settings.ConnectionString);
+});
 builder.Services.AddDbContext<MovieManagementDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 

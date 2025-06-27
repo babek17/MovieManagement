@@ -1,10 +1,12 @@
 using MovieManagement.Entities;
+using System.Collections.Generic;
+using System.Threading.Tasks;
 
-namespace MovieManagement.Repositories;
-
-public interface ICommentRepository
+namespace MovieManagement.Repositories
 {
-    void Save();
-    void Add(Comment comment);
-    IQueryable<Comment> GetCommentsForMovie(int movieId);
+    public interface ICommentRepository
+    {
+        Task AddAsync(Comment comment);
+        Task<List<Comment>> GetCommentsForMovieAsync(int movieId);
+    }
 }

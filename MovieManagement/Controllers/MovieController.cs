@@ -21,10 +21,10 @@ public class MovieController: Controller
         _userServices = userServices;
     }
 
-    public IActionResult MovieDetails(int id)
+    public async Task<IActionResult> MovieDetails(int id)
     {
         var movie = _movieService.GetMovieById(id);
-        var comments = _movieService.GetCommentsForMovie(id).ToList();
+        var comments = await _movieService.GetCommentsForMovie(id);
         int? userRating = null;
         HashSet<int> userWatchlistMovieIds = new();
         if (User.Identity.IsAuthenticated)
@@ -113,7 +113,7 @@ public class MovieController: Controller
     
     [HttpPost]
     [Authorize]
-    public IActionResult AddComment(int movieId, string comment)
+    public async Task<IActionResult> AddComment(int movieId, string comment)
     {
         if (string.IsNullOrWhiteSpace(comment))
         {
@@ -127,7 +127,7 @@ public class MovieController: Controller
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
             throw new Exception("UserId is null!");
-        _movieService.AddComment(movieId, userId, comment);
+        await _movieService.AddCommentAsync(userId, movieId, comment);
 
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
