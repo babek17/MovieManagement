@@ -145,6 +145,16 @@ public class MovieService: IMovieService
         await _commentRepository.AddAsync(comment);
     }
     
+    public async Task DeleteCommentAsync(string userId, int movieId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) throw new Exception("User not found");
+        
+        var comment = await _commentRepository.FindCommentByUserAndMovieIdAsync(userId, movieId);
+
+        await _commentRepository.DeleteAsync(comment);
+    }
+    
     public void RemoveMovie(int movieId)
     {
         _movieRepository.Remove(movieId);

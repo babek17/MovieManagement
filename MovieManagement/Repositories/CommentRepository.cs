@@ -1,8 +1,5 @@
 using MongoDB.Driver;
 using MovieManagement.Entities;
-using Microsoft.Extensions.Options;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 
 namespace MovieManagement.Repositories
 {
@@ -17,9 +14,19 @@ namespace MovieManagement.Repositories
             _comments = database.GetCollection<Comment>(config["MongoDBSettings:CommentsCollectionName"]);
         }
 
+        public async Task<Comment> FindCommentByUserAndMovieIdAsync(string userId, int movieId)
+        {
+            var comment =  await _comments.Find(comment => comment.UserId == userId && comment.MovieId == movieId).FirstOrDefaultAsync();
+            return comment;
+        }
         public async Task AddAsync(Comment comment)
         {
             await _comments.InsertOneAsync(comment);
+        }
+
+        public async Task DeleteAsync(Comment comment)
+        {
+            await _comments.DeleteOneAsync(c => c.Id == comment.Id);
         }
 
         public async Task<List<Comment>> GetCommentsForMovieAsync(int movieId)

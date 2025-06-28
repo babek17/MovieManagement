@@ -13,6 +13,7 @@ public interface IMovieService
     FilteredMovieResult GetFilteredMoviesAsync(MovieQuery query);
     void RateMovie(int movieId, string userId, int score);
     Task AddCommentAsync(string userId, int movieId, string commentText);
+    Task DeleteCommentAsync(string userId, int movieId);
     Task<List<Comment>> GetCommentsForMovie(int movieId);
     void RemoveMovie(int movieId);
     Task AddMovieAsync(MovieDetails model, string rootPath, int directorId);

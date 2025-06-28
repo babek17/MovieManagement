@@ -132,4 +132,19 @@ public class MovieController: Controller
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
 
+
+    [HttpPost]
+    [Authorize]
+    public async Task<IActionResult> RemoveComment(int movieId)
+    {
+        if (!User.Identity.IsAuthenticated)
+        {
+            return Unauthorized();
+        }
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        if (string.IsNullOrEmpty(userId))
+            throw new Exception("UserId is null!");
+        await _movieService.DeleteCommentAsync(userId, movieId);
+        return RedirectToAction("MovieDetails", new { id = movieId });
+    }
 }
