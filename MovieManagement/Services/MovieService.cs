@@ -187,7 +187,19 @@ public class MovieService: IMovieService
         await _commentRepository.AddAsync(comment);
     }
     
-    
+    public async Task DeleteCommentAsync(string userId, int movieId, string commentId)
+    {
+        var user = await _userManager.FindByIdAsync(userId);
+        if (user == null) throw new Exception("User not found");
+
+        var comment = await _commentRepository.FindByIdAsync(commentId);
+        if (comment == null) throw new Exception("Comment not found");
+
+        if (comment.UserId != userId)
+            throw new UnauthorizedAccessException("You can only delete your own comments.");
+
+        await _commentRepository.SoftDeleteAsync(comment);
+    }
     
     public async Task DeleteCommentAsync(string userId, int movieId)
     {

@@ -25,11 +25,25 @@ namespace MovieManagement.Repositories
             await _comments.InsertOneAsync(comment);
         }
 
+        public async Task<Comment> FindByIdAsync(string commentId)
+        {
+            var comment = await _comments.Find(comment => comment.Id == commentId).FirstOrDefaultAsync();
+            return comment;
+        }
+        
         public async Task DeleteAsync(Comment comment)
         {
             await _comments.DeleteOneAsync(c => c.Id == comment.Id);
         }
+        public async Task SoftDeleteAsync(Comment comment)
+        {
+            var update = Builders<Comment>.Update
+                .Set(c => c.CommentText, "Deleted");
 
+            await _comments.UpdateOneAsync(c => c.Id == comment.Id, update);
+        }
+
+        
         public async Task<List<Comment>> GetCommentsForMovieAsync(int movieId)
         {
             var filter = Builders<Comment>.Filter.Eq(c => c.MovieId, movieId);

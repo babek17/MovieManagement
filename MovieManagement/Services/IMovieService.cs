@@ -16,6 +16,7 @@ public interface IMovieService
     Task AddCommentAsync(string userId, int movieId, string commentText);
     Task AddCommentAsync(string userId, string userName, int movieId, string commentText, string? parentCommentId);
     Task DeleteCommentAsync(string userId, int movieId);
+    Task DeleteCommentAsync(string userId, int movieId, string commentId);
     Task<List<Comment>> GetCommentsForMovie(int movieId);
     void RemoveMovie(int movieId);
     Task AddMovieAsync(MovieDetails model, string rootPath, int directorId);

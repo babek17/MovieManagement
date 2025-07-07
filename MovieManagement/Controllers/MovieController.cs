@@ -135,16 +135,14 @@ public class MovieController: Controller
 
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> RemoveComment(int movieId)
+    public async Task<IActionResult> RemoveComment(int movieId, string commentId)
     {
-        if (!User.Identity.IsAuthenticated)
-        {
-            return Unauthorized();
-        }
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
         if (string.IsNullOrEmpty(userId))
-            throw new Exception("UserId is null!");
-        await _movieService.DeleteCommentAsync(userId, movieId);
+            return Unauthorized();
+
+        await _movieService.DeleteCommentAsync(userId, movieId, commentId);
+
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
     
