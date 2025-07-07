@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Identity;
 using MovieManagement.Models;
+using MovieManagement.MongoEntities;
 
 namespace MovieManagement.Entities;
 

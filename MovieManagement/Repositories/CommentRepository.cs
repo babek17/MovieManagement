@@ -1,5 +1,6 @@
 using MongoDB.Driver;
 using MovieManagement.Entities;
+using MovieManagement.MongoEntities;
 
 namespace MovieManagement.Repositories
 {
@@ -33,6 +34,17 @@ namespace MovieManagement.Repositories
         {
             var filter = Builders<Comment>.Filter.Eq(c => c.MovieId, movieId);
             return await _comments.Find(filter).ToListAsync();
+        }
+        
+        public async Task DeleteCommentAndRepliesRecursivelyAsync(Comment comment)
+        {
+            await _comments.DeleteOneAsync(c => c.Id == comment.Id);
+            var replies = await _comments.Find(c => c.ParentCommentId == comment.Id).ToListAsync();
+
+            foreach (var reply in replies)
+            {
+                await DeleteCommentAndRepliesRecursivelyAsync(reply);
+            }
         }
     }
 }

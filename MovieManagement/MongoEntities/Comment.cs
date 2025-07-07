@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
-namespace MovieManagement.Entities;
+namespace MovieManagement.MongoEntities;
 [NotMapped]
 public class Comment
 {
@@ -24,4 +24,8 @@ public class Comment
 
     [BsonElement("commentDate")]
     public DateTime CommentDate { get; set; }
+    
+    [BsonElement("parentCommentId")]
+    [BsonRepresentation(BsonType.ObjectId)]
+    public string? ParentCommentId { get; set; }
 }

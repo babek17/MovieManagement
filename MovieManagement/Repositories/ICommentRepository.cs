@@ -1,6 +1,7 @@
 using MovieManagement.Entities;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using MovieManagement.MongoEntities;
 
 namespace MovieManagement.Repositories
 {

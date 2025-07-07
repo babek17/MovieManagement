@@ -1,0 +1,50 @@
+@model CommentDto
+@using Microsoft.AspNetCore.Identity
+@using MovieManagement.Entities
+@inject UserManager<ApplicationUser> UserManager
+
+<li class="list-group-item" style="margin-left:@(Model.NestingStage * 20)px;">
+    <div>
+        <strong>@Model.UserName</strong>
+        <small class="text-muted">— @Model.CommentDate.ToString("MMM dd, yyyy")</small><br />
+        @Model.CommentText
+    </div>
+
+    @{
+        var currentUserId = UserManager.GetUserId(User);
+    }
+
+    @if (Model.UserId == currentUserId)
+    {
+        <form asp-controller="Movie" asp-action="RemoveComment" asp-route-movieId="@Model.MovieId" asp-route-commentId="@Model.Id" method="post" class="mt-2">
+            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+        </form>
+    }
+
+    <!-- Single Reply Form -->
+    <form asp-controller="Movie" asp-action="AddComment" method="post" class="mt-2">
+        <input type="hidden" name="movieId" value="@Model.MovieId" />
+        <input type="hidden" name="parentCommentId" value="@Model.Id" />
+        <div class="input-group">
+            <input type="text" 
+                   name="comment" 
+                   class="form-control" 
+                   placeholder="Reply..." 
+                   id="reply-input-@Model.Id"
+                   onfocus="prefillReply('@Model.UserName', 'reply-input-@Model.Id')" 
+                   required />
+            <button type="submit" class="btn btn-outline-secondary">Reply</button>
+        </div>
+    </form>
+
+    <!-- Nested Replies -->
+    @if (Model.Replies.Any())
+    {
+        <ul class="list-group mt-2">
+            @foreach (var reply in Model.Replies)
+            {
+                <partial name="_CommentPartial" model="reply" />
+            }
+        </ul>
+    }
+</li>

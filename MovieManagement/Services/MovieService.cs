@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using MovieManagement.Entities;
 using MovieManagement.Models;
+using MovieManagement.MongoEntities;
 using MovieManagement.Repositories;
 
 namespace MovieManagement.Services;
@@ -127,6 +128,47 @@ public class MovieService: IMovieService
        var comments = await _commentRepository.GetCommentsForMovieAsync(movieId);
        return comments;
     }
+    public async Task<List<CommentDto>> GetNestedCommentsAsync(int movieId)
+    {
+        var allComments = await _commentRepository.GetCommentsForMovieAsync(movieId);
+        var rootComments = allComments.Where(c => string.IsNullOrEmpty(c.ParentCommentId)).ToList();
+
+        List<CommentDto> BuildHierarchy(List<Comment> comments, string? parentId, int level=0)
+        {
+            return comments
+                .Where(c => c.ParentCommentId == parentId)
+                .Select(c => new CommentDto
+                {
+                    Id = c.Id,
+                    MovieId = c.MovieId,
+                    UserId = c.UserId,
+                    UserName = c.UserName,
+                    CommentText = c.CommentText,
+                    CommentDate = c.CommentDate,
+                    NestingStage = level,
+                    Replies = BuildHierarchy(comments, c.Id, level + 1)
+                })
+                .ToList();
+        }
+
+        return BuildHierarchy(allComments, null);
+    }
+
+    public async Task AddCommentAsync(string userId, string userName, int movieId, string commentText, string? parentCommentId)
+    {
+        var comment = new Comment
+        {
+            UserId = userId,
+            UserName = userName,
+            MovieId = movieId,
+            CommentText = commentText,
+            CommentDate = DateTime.UtcNow,
+            ParentCommentId = parentCommentId
+        };
+
+        await _commentRepository.AddAsync(comment);
+    }
+
     
     public async Task AddCommentAsync(string userId, int movieId, string commentText)
     {
@@ -144,6 +186,8 @@ public class MovieService: IMovieService
 
         await _commentRepository.AddAsync(comment);
     }
+    
+    
     
     public async Task DeleteCommentAsync(string userId, int movieId)
     {

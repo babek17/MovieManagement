@@ -24,7 +24,7 @@ public class MovieController: Controller
     public async Task<IActionResult> MovieDetails(int id)
     {
         var movie = _movieService.GetMovieById(id);
-        var comments = await _movieService.GetCommentsForMovie(id);
+        var comments = await _movieService.GetNestedCommentsAsync(id);
         int? userRating = null;
         HashSet<int> userWatchlistMovieIds = new();
         if (User.Identity.IsAuthenticated)
@@ -113,21 +113,21 @@ public class MovieController: Controller
     
     [HttpPost]
     [Authorize]
-    public async Task<IActionResult> AddComment(int movieId, string comment)
+    public async Task<IActionResult> AddComment(int movieId, string comment, string? parentCommentId)
     {
         if (string.IsNullOrWhiteSpace(comment))
         {
             TempData["Error"] = "Comment cannot be empty.";
             return RedirectToAction("MovieDetails", new { id = movieId });
         }
-        if (!User.Identity.IsAuthenticated)
-        {
-            return Unauthorized();
-        }
+
         var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-        if (string.IsNullOrEmpty(userId))
-            throw new Exception("UserId is null!");
-        await _movieService.AddCommentAsync(userId, movieId, comment);
+        var userName = User.Identity.Name;
+
+        if (string.IsNullOrEmpty(userId) || string.IsNullOrEmpty(userName))
+            throw new Exception("User information is incomplete!");
+
+        await _movieService.AddCommentAsync(userId, userName,movieId, comment, parentCommentId);
 
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
@@ -147,4 +147,5 @@ public class MovieController: Controller
         await _movieService.DeleteCommentAsync(userId, movieId);
         return RedirectToAction("MovieDetails", new { id = movieId });
     }
+    
 }

@@ -1,6 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using MovieManagement.Entities;
+using MovieManagement.MongoEntities;
 
 namespace MovieManagement.Models;
 
@@ -19,7 +20,7 @@ public class MovieDetails
     public Decimal Rating { get; set; } = 0;
     public int? UserRating { get; set; }
     public IFormFile ImageFile { get; set; }
-    public List<Comment> Comments { get; set; }= new List<Comment>();
+    public List<CommentDto> Comments { get; set; }= new List<CommentDto>();
     public string Description { get; set; }
     public bool IsInWatchlist { get; set; }
 

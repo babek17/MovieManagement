@@ -1,5 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 using MovieManagement.Attributes;
+using MovieManagement.MongoEntities;
 
 namespace MovieManagement.Entities;
 
